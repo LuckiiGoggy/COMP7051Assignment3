@@ -16,12 +16,22 @@ namespace Assignment3
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
-        GraphicsDeviceManager graphics;
+        public static GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-
+        View view;
+        Vector3 avatarPosition = new Vector3(0, 0, -50);
+        float avatarYaw;
+        float rotationSpeed = 1f / 60f;
+        float forwardSpeed = 50f / 60f;
+        public static Renderer3D Renderer3D = new Renderer3D();
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
+            graphics.IsFullScreen = false;
+            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 720;
+            graphics.ApplyChanges();
+
             Content.RootDirectory = "Content";
         }
 
@@ -47,6 +57,9 @@ namespace Assignment3
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            view = new View(this.Window.ClientBounds.Width, this.Window.ClientBounds.Height);
+
+            view.Add(new GameObjects.GameObject3D(Content.Load<Model>("balls"), Content.Load<Texture2D>("eye texture")));
             // TODO: use this.Content to load your game content here
         }
 
@@ -59,6 +72,39 @@ namespace Assignment3
             // TODO: Unload any non ContentManager content here
         }
 
+        public void UpdatePosition()
+        {
+            KeyboardState keyboardState = Keyboard.GetState();
+            GamePadState currentState = GamePad.GetState(PlayerIndex.One);
+
+            if (keyboardState.IsKeyDown(Keys.Left) || (currentState.DPad.Left == ButtonState.Pressed))
+            {
+                // Rotate left.
+                avatarYaw += rotationSpeed;
+            }
+            if (keyboardState.IsKeyDown(Keys.Right) || (currentState.DPad.Right == ButtonState.Pressed))
+            {
+                // Rotate right.
+                avatarYaw -= rotationSpeed;
+            }
+            if (keyboardState.IsKeyDown(Keys.Up) || (currentState.DPad.Up == ButtonState.Pressed))
+            {
+                Matrix forwardMovement = Matrix.CreateRotationY(avatarYaw);
+                Vector3 v = new Vector3(0, 0, forwardSpeed);
+                v = Vector3.Transform(v, forwardMovement);
+                avatarPosition.Z += v.Z;
+                avatarPosition.X += v.X;
+            }
+            if (keyboardState.IsKeyDown(Keys.Down) || (currentState.DPad.Down == ButtonState.Pressed))
+            {
+                Matrix forwardMovement = Matrix.CreateRotationY(avatarYaw);
+                Vector3 v = new Vector3(0, 0, -forwardSpeed);
+                v = Vector3.Transform(v, forwardMovement);
+                avatarPosition.Z += v.Z;
+                avatarPosition.X += v.X;
+            }
+        }
+
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -69,7 +115,9 @@ namespace Assignment3
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
-
+            UpdatePosition();
+            view.Camera.Position = avatarPosition;
+            view.Camera.UpdateCamera(avatarYaw);
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -83,6 +131,7 @@ namespace Assignment3
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            Renderer3D.Render(view);
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
