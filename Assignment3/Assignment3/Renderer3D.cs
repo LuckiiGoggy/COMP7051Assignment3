@@ -22,12 +22,12 @@ namespace Assignment3
         float lightIntensity = 1;
         public void Day()
         {
-            lightIntensity = 1;
+            lightIntensity = 20;
         }
 
         public void Night()
         {
-            lightIntensity = 0.1f;
+            lightIntensity = 0.3f;
         }
 
         public void Render(View view){
@@ -54,8 +54,8 @@ namespace Assignment3
                         effect.LightingEnabled = true;
                         effect.DirectionalLight0.DiffuseColor = new Vector3(1, 1, 1);
                         effect.AmbientLightColor = new Vector3(lightIntensity, lightIntensity, lightIntensity);
-                        effect.DirectionalLight0.Direction = new Vector3(0, 1, 0);
-                        effect.DirectionalLight0.SpecularColor = new Vector3(0, 1, 0);
+                        effect.DirectionalLight0.Direction = new Vector3(0, 0, 0);
+                        effect.DirectionalLight0.SpecularColor = new Vector3(0, 0, 0);
                         Game1.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.LinearClamp;
                     }
 
