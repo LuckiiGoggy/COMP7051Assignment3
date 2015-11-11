@@ -21,7 +21,8 @@ namespace Assignment3.Utilities
         public void InitTextureLibrary(ContentManager Content)
         {
             Textures = new Dictionary<string, Texture2D>();
-            Textures.Add("EyeTex", Content.Load<Texture2D>("eye texture"));
+            Textures.Add("WallTex", Content.Load<Texture2D>("MazeWall"));
+            Textures.Add("FloorTex", Content.Load<Texture2D>("MazeFloor"));
         }
 
         public Texture2D Get(String key)

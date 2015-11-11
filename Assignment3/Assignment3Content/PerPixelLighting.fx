@@ -234,8 +234,10 @@ float4 DiffuseAndPhongPS(PixelShaderInputPerPixelDiffuse input) : COLOR
 	float4 textureColor = tex2D(textureSampler, input.TextureCoordinate);
 	textureColor.a = 1;
 
+	float4 texColor = textureColor * (input.Color);
+	texColor *= diffuseIntensity;
 	//all color components are summed in the pixel shader
-	float4 color = saturate(textureColor * (input.Color) + diffuse + ambientLightColor);// +specular);//specular + diffuse + ambientLightColor;
+	float4 color = saturate(texColor + diffuse + ambientLightColor);// +specular);//specular + diffuse + ambientLightColor;
 	color.a = 1.0;
 	
 	return color;

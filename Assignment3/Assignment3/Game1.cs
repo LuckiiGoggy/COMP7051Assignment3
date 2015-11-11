@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Assignment3.Utilities;
-
+using Assignment3.GameObjects;
 namespace Assignment3
 {
     /// <summary>
@@ -20,19 +20,19 @@ namespace Assignment3
         public static GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         View view;
-        Vector3 avatarPosition = new Vector3(0, -1, 0);
         Effect effect;
-        float avatarYaw;
-        float rotationSpeed = 1f / 60f;
-        float forwardSpeed = 50f / 60f;
+        Vector3 avatarPosition = new Vector3(-3, 2, 0);
+        float avatarYaw = -1.6f;
+        float avatarPitch;
+        float currentavatarPitch;
+        float rotationSpeed = 2f / 60f;
+        float forwardSpeed = 5f / 60f;
+
         public static Renderer3D Renderer3D = new Renderer3D();
 
         public static ModelLibrary ModelLib = new ModelLibrary();
         public static TextureLibrary TexLib = new TextureLibrary();
         public static GameWindow Wind;
-
-
-
 
         private EffectParameter cameraPositionParameter;
         private EffectParameter specularPowerParameter;
@@ -40,6 +40,15 @@ namespace Assignment3
 
         private float specularPower, specularIntensity;
 
+
+        public CollisionChecker colChecker;
+        Vector3 v;
+        bool XrayMode = true;
+        public float zoomFactor = 0.5f;
+        GamePadState gState;
+        KeyboardState kState;
+
+        bool night = false;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -81,11 +90,11 @@ namespace Assignment3
             ModelLib.InitModelLibrary(Content);
             TexLib.InitTextureLibrary(Content);
 
+     
             //view = new View(this.Window.ClientBounds.Width, this.Window.ClientBounds.Height);
             view = new MazeObjects.Maze();
             //view.Add(new GameObjects.GameObject3D(ModelLib.Get("Ball"), TexLib.Get("EyeTex")));
             // TODO: use this.Content to load your game content here
-
 
 
             effect = Content.Load<Effect>("PerPixelLighting");
@@ -104,7 +113,7 @@ namespace Assignment3
 
             // set the light colors
             effect.Parameters["ambientLightColor"].SetValue(
-                new Vector4(255, 255, 255, 1));
+                new Vector4(255, 255, 255, 0));
             effect.Parameters["diffuseLightColor"].SetValue(
                 Color.CornflowerBlue.ToVector4());
             effect.Parameters["specularLightColor"].SetValue(
@@ -118,11 +127,12 @@ namespace Assignment3
 
 
             effect.Parameters["FullStrengthDistance"].SetValue(0.001f);
-            effect.Parameters["MaxDistance"].SetValue(30);
-            
+            effect.Parameters["MaxDistance"].SetValue(10);
 
+            colChecker = new CollisionChecker(view.GameObject3DList);
+            colChecker.CreateBoxes();
         }
-
+        
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
         /// all content.
@@ -137,48 +147,142 @@ namespace Assignment3
             KeyboardState keyboardState = Keyboard.GetState();
             GamePadState currentState = GamePad.GetState(PlayerIndex.One);
 
-            if (keyboardState.IsKeyDown(Keys.Left) || (currentState.DPad.Left == ButtonState.Pressed))
+            if (keyboardState.IsKeyDown(Keys.Left))
             {
                 // Rotate left.
                 avatarYaw += rotationSpeed;
             }
-            if (keyboardState.IsKeyDown(Keys.Right) || (currentState.DPad.Right == ButtonState.Pressed))
+            if (keyboardState.IsKeyDown(Keys.Right))
             {
                 // Rotate right.
                 avatarYaw -= rotationSpeed;
             }
-            if (keyboardState.IsKeyDown(Keys.W) || (currentState.DPad.Up == ButtonState.Pressed))
+            if (keyboardState.IsKeyDown(Keys.W) || currentState.ThumbSticks.Left.Y > 0f)
             {
                 Matrix forwardMovement = Matrix.CreateRotationZ(avatarYaw);
-                Vector3 v = new Vector3(0, forwardSpeed, 0);
+                v = new Vector3(0, forwardSpeed, 0);
+                v = Vector3.Transform(v, forwardMovement);
+
+                avatarPosition.Y += v.Y;
+                avatarPosition.X += v.X;
+                if (XrayMode)
+                {
+                    if (colChecker.CheckCollision(avatarPosition))
+                    {
+                        avatarPosition.Y -= v.Y;
+                        avatarPosition.X -= v.X;
+                    }
+
+                }
+            }
+            if (keyboardState.IsKeyDown(Keys.S) || currentState.ThumbSticks.Left.Y < 0f)
+            {
+                Matrix forwardMovement = Matrix.CreateRotationZ(avatarYaw);
+                v = new Vector3(0, -forwardSpeed, 0);
+                v = Vector3.Transform(v, forwardMovement);
+
+              
+                avatarPosition.Y += v.Y;
+                avatarPosition.X += v.X;
+                if (XrayMode)
+                {
+                    if (colChecker.CheckCollision(avatarPosition))
+                    {
+                        avatarPosition.Y -= v.Y;
+                        avatarPosition.X -= v.X;
+                    }
+
+                }
+              
+            }
+            if (keyboardState.IsKeyDown(Keys.A) || currentState.ThumbSticks.Left.X < 0f)
+            {
+                Matrix forwardMovement = Matrix.CreateRotationZ(avatarYaw);
+                v = new Vector3(-forwardSpeed, 0, 0);
+                v = Vector3.Transform(v, forwardMovement);
+
+                avatarPosition.Y += v.Y;
+                avatarPosition.X += v.X;
+
+                if (XrayMode)
+                {
+                    if (colChecker.CheckCollision(avatarPosition))
+                    {
+                        avatarPosition.Y -= v.Y;
+                        avatarPosition.X -= v.X;
+                    }
+
+                }
+
+                
+            }
+            if (keyboardState.IsKeyDown(Keys.D) || currentState.ThumbSticks.Left.X > 0f)
+            {
+                Matrix forwardMovement = Matrix.CreateRotationZ(avatarYaw);
+                v = new Vector3(forwardSpeed, 0, 0);
                 v = Vector3.Transform(v, forwardMovement);
                 avatarPosition.Y += v.Y;
                 avatarPosition.X += v.X;
+
+                if (XrayMode)
+                {
+                    if (colChecker.CheckCollision(avatarPosition))
+                    {
+                        avatarPosition.Y -= v.Y;
+                        avatarPosition.X -= v.X;
+                    }
+
+                }
             }
-            if (keyboardState.IsKeyDown(Keys.S) || (currentState.DPad.Down == ButtonState.Pressed))
+
+            if (currentState.ThumbSticks.Right.X != 0)
             {
-                Matrix forwardMovement = Matrix.CreateRotationZ(avatarYaw);
-                Vector3 v = new Vector3(0, -forwardSpeed, 0);
-                v = Vector3.Transform(v, forwardMovement);
-                avatarPosition.Y += v.Y;
-                avatarPosition.X += v.X;
+                avatarYaw -= currentState.ThumbSticks.Right.X * rotationSpeed;
             }
-            if (keyboardState.IsKeyDown(Keys.A) || (currentState.DPad.Left == ButtonState.Pressed))
+
+            if (currentState.ThumbSticks.Right.Y != 0)
             {
-                Matrix forwardMovement = Matrix.CreateRotationZ(avatarYaw);
-                Vector3 v = new Vector3(-forwardSpeed, 0, 0);
-                v = Vector3.Transform(v, forwardMovement);
-                avatarPosition.Y += v.Y;
-                avatarPosition.X += v.X;
+                avatarPitch += currentState.ThumbSticks.Right.Y * rotationSpeed;
+                if (Math.Abs(avatarPitch) > 0.3)
+                    avatarPitch = currentavatarPitch;
+                
+                currentavatarPitch = avatarPitch;
             }
-            if (keyboardState.IsKeyDown(Keys.D) || (currentState.DPad.Right == ButtonState.Pressed))
+
+            if (keyboardState.IsKeyDown(Keys.X) || (currentState.Buttons.Y == ButtonState.Pressed) &&(gState.Buttons.Y != ButtonState.Pressed ))
             {
-                Matrix forwardMovement = Matrix.CreateRotationZ(avatarYaw);
-                Vector3 v = new Vector3(forwardSpeed, 0, 0);
-                v = Vector3.Transform(v, forwardMovement);
-                avatarPosition.Y += v.Y;
-                avatarPosition.X += v.X;
+                XrayMode = !XrayMode;
             }
+           
+            if (keyboardState.IsKeyDown(Keys.Z) || (currentState.Buttons.B == ButtonState.Pressed))
+            {
+
+                if (view.ZoomFactor > 0.1)
+                    view.ZoomFactor -= 0.1f;
+                    
+            } else if ((keyboardState.IsKeyDown(Keys.Z) && keyboardState.IsKeyDown(Keys.LeftShift)) || keyboardState.IsKeyDown(Keys.C) || (currentState.Buttons.A == ButtonState.Pressed))
+                {
+                    if (view.ZoomFactor < 2)
+                    {
+                        view.ZoomFactor += 0.1f;
+                       
+                    }
+                }
+            if (keyboardState.IsKeyDown(Keys.Home) || (currentState.Buttons.Start == ButtonState.Pressed) && (gState.Buttons.Start != ButtonState.Pressed))
+            {
+                avatarPosition = new Vector3(-3, 2, 0);
+                view.ZoomFactor = MathHelper.PiOver4;
+                avatarYaw = -1.6f;
+                avatarPitch = 0;
+            }
+
+            if (keyboardState.IsKeyDown(Keys.L) && !kState.IsKeyDown(Keys.L))
+            {
+                night = !night;
+            }
+
+            gState = currentState;
+            kState = keyboardState;
         }
 
         /// <summary>
@@ -191,10 +295,15 @@ namespace Assignment3
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
+
             UpdatePosition();
+
+            //Console.WriteLine(avatarPosition.ToString());
             view.Camera.Position = avatarPosition;
-            view.Camera.UpdateCamera(avatarYaw);
+
             effect.Parameters["lightPosition"].SetValue(avatarPosition);
+            view.Camera.UpdateCamera(avatarYaw, avatarPitch);
+         
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -210,8 +319,14 @@ namespace Assignment3
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
+
+            if (night)
+                Renderer3D.Night();
+            else
+                Renderer3D.Day();
             SetSharedEffectParameters();
+            //Renderer3D.Render(view);
             Renderer3D.Render(view, effect);
             // TODO: Add your drawing code here
 
