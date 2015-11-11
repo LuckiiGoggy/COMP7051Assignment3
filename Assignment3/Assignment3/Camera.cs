@@ -29,10 +29,10 @@ namespace Assignment3
         public Matrix View { get; set; }
         public Camera()
         {
-            LookAt = new Vector3(0, 0, 1);
-            Position = new Vector3(0, 0, -50);
-            Up = new Vector3(0, 1, 0);
-            Reference = new Vector3(0, 0, 1);
+            LookAt = new Vector3(0, 1, 0);
+            Position = new Vector3(0, -1, 0);
+            Up = new Vector3(0, 0, 1);
+            Reference = new Vector3(0, 1, 0);
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace Assignment3
         /// <returns>View matrix created using camera transform.</returns>
         public Matrix GetView()
         {
-            return Matrix.CreateLookAt(Position, LookAt, new Vector3(0f,1f,0f));
+            return Matrix.CreateLookAt(Position, LookAt, new Vector3(0f,0f,1f));
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Assignment3
 
         public void UpdateCamera(float yaw)
         {
-            rotationMatrix = Matrix.CreateRotationY(yaw);
+            rotationMatrix = Matrix.CreateRotationZ(yaw);
             transformedReference = Vector3.Transform(Reference, rotationMatrix);
             LookAt = Position + transformedReference;
 

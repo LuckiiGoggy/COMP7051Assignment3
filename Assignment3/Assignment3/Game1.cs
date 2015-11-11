@@ -20,7 +20,7 @@ namespace Assignment3
         public static GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         View view;
-        Vector3 avatarPosition = new Vector3(0, 0, -50);
+        Vector3 avatarPosition = new Vector3(0, -1, 0);
         float avatarYaw;
         float rotationSpeed = 1f / 60f;
         float forwardSpeed = 50f / 60f;
@@ -96,20 +96,36 @@ namespace Assignment3
                 // Rotate right.
                 avatarYaw -= rotationSpeed;
             }
-            if (keyboardState.IsKeyDown(Keys.Up) || (currentState.DPad.Up == ButtonState.Pressed))
+            if (keyboardState.IsKeyDown(Keys.W) || (currentState.DPad.Up == ButtonState.Pressed))
             {
-                Matrix forwardMovement = Matrix.CreateRotationY(avatarYaw);
-                Vector3 v = new Vector3(0, 0, forwardSpeed);
+                Matrix forwardMovement = Matrix.CreateRotationZ(avatarYaw);
+                Vector3 v = new Vector3(0, forwardSpeed, 0);
                 v = Vector3.Transform(v, forwardMovement);
-                avatarPosition.Z += v.Z;
+                avatarPosition.Y += v.Y;
                 avatarPosition.X += v.X;
             }
-            if (keyboardState.IsKeyDown(Keys.Down) || (currentState.DPad.Down == ButtonState.Pressed))
+            if (keyboardState.IsKeyDown(Keys.S) || (currentState.DPad.Down == ButtonState.Pressed))
             {
-                Matrix forwardMovement = Matrix.CreateRotationY(avatarYaw);
-                Vector3 v = new Vector3(0, 0, -forwardSpeed);
+                Matrix forwardMovement = Matrix.CreateRotationZ(avatarYaw);
+                Vector3 v = new Vector3(0, -forwardSpeed, 0);
                 v = Vector3.Transform(v, forwardMovement);
-                avatarPosition.Z += v.Z;
+                avatarPosition.Y += v.Y;
+                avatarPosition.X += v.X;
+            }
+            if (keyboardState.IsKeyDown(Keys.A) || (currentState.DPad.Left == ButtonState.Pressed))
+            {
+                Matrix forwardMovement = Matrix.CreateRotationZ(avatarYaw);
+                Vector3 v = new Vector3(-forwardSpeed, 0, 0);
+                v = Vector3.Transform(v, forwardMovement);
+                avatarPosition.Y += v.Y;
+                avatarPosition.X += v.X;
+            }
+            if (keyboardState.IsKeyDown(Keys.D) || (currentState.DPad.Right == ButtonState.Pressed))
+            {
+                Matrix forwardMovement = Matrix.CreateRotationZ(avatarYaw);
+                Vector3 v = new Vector3(forwardSpeed, 0, 0);
+                v = Vector3.Transform(v, forwardMovement);
+                avatarPosition.Y += v.Y;
                 avatarPosition.X += v.X;
             }
         }
