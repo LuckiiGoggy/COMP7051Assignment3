@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using Assignment3.Utilities;
 
 namespace Assignment3
 {
@@ -24,6 +25,10 @@ namespace Assignment3
         float rotationSpeed = 1f / 60f;
         float forwardSpeed = 50f / 60f;
         public static Renderer3D Renderer3D = new Renderer3D();
+
+        public static ModelLibrary ModelLib = new ModelLibrary();
+        public static TextureLibrary TexLib = new TextureLibrary();
+        public static GameWindow Wind;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -33,6 +38,7 @@ namespace Assignment3
             graphics.ApplyChanges();
 
             Content.RootDirectory = "Content";
+            Wind = this.Window;
         }
 
         /// <summary>
@@ -57,9 +63,12 @@ namespace Assignment3
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            view = new View(this.Window.ClientBounds.Width, this.Window.ClientBounds.Height);
+            ModelLib.InitModelLibrary(Content);
+            TexLib.InitTextureLibrary(Content);
 
-            view.Add(new GameObjects.GameObject3D(Content.Load<Model>("balls"), Content.Load<Texture2D>("eye texture")));
+            //view = new View(this.Window.ClientBounds.Width, this.Window.ClientBounds.Height);
+            view = new MazeObjects.Maze();
+            //view.Add(new GameObjects.GameObject3D(ModelLib.Get("Ball"), TexLib.Get("EyeTex")));
             // TODO: use this.Content to load your game content here
         }
 
