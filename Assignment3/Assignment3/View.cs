@@ -25,12 +25,13 @@ namespace Assignment3
         public float Width { get; set; }
         public float Height { get; set; }
 
+        public float ZoomFactor { get; set; }
         public View(float width, float height)
         {
             GameObject3DList = new List<GameObject3D>();
             Width = width;
             Height = height;
-
+            ZoomFactor = MathHelper.PiOver4;
             Camera = new Camera();
         }
 
@@ -46,7 +47,7 @@ namespace Assignment3
 
         public Matrix GetProjectionMatrix()
         {
-            return Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, Width / Height, 0.1f, 99999f);
+            return Matrix.CreatePerspectiveFieldOfView(ZoomFactor, Width / Height, 0.1f, 99999f);
         }
     }
 }

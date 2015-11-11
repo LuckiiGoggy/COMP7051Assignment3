@@ -34,8 +34,11 @@ namespace Assignment3
         public CollisionChecker colChecker;
         Vector3 v;
         bool XrayMode = true;
-
+        public float zoomFactor = 0.5f;
         GamePadState gState;
+        KeyboardState kState;
+
+        bool night = false;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -202,8 +205,36 @@ namespace Assignment3
             {
                 XrayMode = !XrayMode;
             }
+           
+            if (keyboardState.IsKeyDown(Keys.Z) || (currentState.Buttons.B == ButtonState.Pressed))
+            {
+
+                if (view.ZoomFactor > 0.1)
+                    view.ZoomFactor -= 0.1f;
+                    
+            } else if ((keyboardState.IsKeyDown(Keys.Z) && keyboardState.IsKeyDown(Keys.LeftShift)) || keyboardState.IsKeyDown(Keys.C) || (currentState.Buttons.A == ButtonState.Pressed))
+                {
+                    if (view.ZoomFactor < 2)
+                    {
+                        view.ZoomFactor += 0.1f;
+                       
+                    }
+                }
+            if (keyboardState.IsKeyDown(Keys.Home) || (currentState.Buttons.Start == ButtonState.Pressed) && (gState.Buttons.Start != ButtonState.Pressed))
+            {
+                avatarPosition = new Vector3(-3, 2, 0);
+                view.ZoomFactor = MathHelper.PiOver4;
+                avatarYaw = -1.6f;
+                avatarPitch = 0;
+            }
+
+            if (keyboardState.IsKeyDown(Keys.L) && !kState.IsKeyDown(Keys.L))
+            {
+                night = !night;
+            }
 
             gState = currentState;
+            kState = keyboardState;
         }
 
         /// <summary>
@@ -218,8 +249,7 @@ namespace Assignment3
                 this.Exit();
 
             UpdatePosition();
-            
-           
+
             //Console.WriteLine(avatarPosition.ToString());
             view.Camera.Position = avatarPosition;
             view.Camera.UpdateCamera(avatarYaw, avatarPitch);
@@ -237,6 +267,10 @@ namespace Assignment3
         {
             GraphicsDevice.Clear(Color.Black);
 
+            if (night)
+                Renderer3D.Night();
+            else
+                Renderer3D.Day();
             Renderer3D.Render(view);
             // TODO: Add your drawing code here
 
