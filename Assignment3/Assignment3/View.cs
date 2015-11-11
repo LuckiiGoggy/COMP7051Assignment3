@@ -46,7 +46,7 @@ namespace Assignment3
 
         public Matrix GetProjectionMatrix()
         {
-            return Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, Width / Height, 1f, 5000f);
+            return Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, Width / Height, 0.1f, 99999f);
         }
     }
 }

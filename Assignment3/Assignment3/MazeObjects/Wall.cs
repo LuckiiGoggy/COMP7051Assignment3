@@ -9,12 +9,12 @@ namespace Assignment3.MazeObjects
     public class Wall : GameObjects.GameObject3D
     {
         public Wall()
-            : base(Game1.ModelLib.Get("Ball"), Game1.TexLib.Get("EyeTex"))
+            : base(Game1.ModelLib.Get("Wall"), Game1.TexLib.Get("WallTex"))
         {
         }
 
         public Wall(Vector3 startPos)
-            : base(Game1.ModelLib.Get("Ball"), Game1.TexLib.Get("EyeTex"))
+            : base(Game1.ModelLib.Get("Wall"), Game1.TexLib.Get("WallTex"))
         {
             Position = startPos;
         }

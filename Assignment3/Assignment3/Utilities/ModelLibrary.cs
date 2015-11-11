@@ -13,7 +13,8 @@ namespace Assignment3.Utilities
 
         public void InitModelLibrary(ContentManager Content)
         {
-            Models.Add("Ball", Content.Load<Model>("balls"));
+            Models.Add("Wall", Content.Load<Model>("MazeWallModel"));
+            Models.Add("Floor", Content.Load<Model>("MazeFloorModel"));
         }
 
         public Model Get(String key)

@@ -37,6 +37,8 @@ namespace Assignment3.MazeObjects
                 {
                     if(mazeSpec[row,col] == 1)
                         Add(new Wall(new Vector3(2 * col, 2 * row, 0)));
+                    if (mazeSpec[row, col] == 0)
+                        Add(new Floor(new Vector3(2 * col, 2 * row, -1)));
                 }
             }
 
