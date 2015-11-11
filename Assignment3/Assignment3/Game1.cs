@@ -21,6 +21,7 @@ namespace Assignment3
         SpriteBatch spriteBatch;
         View view;
         Vector3 avatarPosition = new Vector3(0, -1, 0);
+        Effect effect;
         float avatarYaw;
         float rotationSpeed = 1f / 60f;
         float forwardSpeed = 50f / 60f;
@@ -29,6 +30,16 @@ namespace Assignment3
         public static ModelLibrary ModelLib = new ModelLibrary();
         public static TextureLibrary TexLib = new TextureLibrary();
         public static GameWindow Wind;
+
+
+
+
+        private EffectParameter cameraPositionParameter;
+        private EffectParameter specularPowerParameter;
+        private EffectParameter specularIntensityParameter;
+
+        private float specularPower, specularIntensity;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -49,6 +60,10 @@ namespace Assignment3
         /// </summary>
         protected override void Initialize()
         {
+            // set the initial specular values
+            specularPower = 20;
+            specularIntensity = 1;
+
             // TODO: Add your initialization logic here
 
             base.Initialize();
@@ -70,6 +85,42 @@ namespace Assignment3
             view = new MazeObjects.Maze();
             //view.Add(new GameObjects.GameObject3D(ModelLib.Get("Ball"), TexLib.Get("EyeTex")));
             // TODO: use this.Content to load your game content here
+
+
+
+            effect = Content.Load<Effect>("PerPixelLighting");
+
+
+            // cache the effect parameters
+            cameraPositionParameter = effect.Parameters["cameraPosition"];
+            specularPowerParameter = effect.Parameters["specularPower"];
+            specularIntensityParameter = effect.Parameters["specularIntensity"];
+            cameraPositionParameter = effect.Parameters["cameraPosition"];
+
+            //
+            // set up some basic effect parameters that do not change during the
+            // course of execution
+            //
+
+            // set the light colors
+            effect.Parameters["ambientLightColor"].SetValue(
+                new Vector4(255, 255, 255, 1));
+            effect.Parameters["diffuseLightColor"].SetValue(
+                Color.CornflowerBlue.ToVector4());
+            effect.Parameters["specularLightColor"].SetValue(
+                Color.White.ToVector4());
+
+            // Set the light position to a fixed location.
+            // This will place the light source behind, to the right, and above the
+            // initial camera position.
+            effect.Parameters["lightPosition"].SetValue(
+                new Vector3(0f, 1f, 0f));
+
+
+            effect.Parameters["FullStrengthDistance"].SetValue(0.001f);
+            effect.Parameters["MaxDistance"].SetValue(30);
+            
+
         }
 
         /// <summary>
@@ -143,11 +194,16 @@ namespace Assignment3
             UpdatePosition();
             view.Camera.Position = avatarPosition;
             view.Camera.UpdateCamera(avatarYaw);
+            effect.Parameters["lightPosition"].SetValue(avatarPosition);
             // TODO: Add your update logic here
 
             base.Update(gameTime);
         }
-
+        private void SetSharedEffectParameters()
+        {
+            specularPowerParameter.SetValue(specularPower);
+            specularIntensityParameter.SetValue(specularIntensity);
+        }
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -155,8 +211,8 @@ namespace Assignment3
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            Renderer3D.Render(view);
+            SetSharedEffectParameters();
+            Renderer3D.Render(view, effect);
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);

@@ -56,5 +56,48 @@ namespace Assignment3
             }
         }
 
+        public void Render(View view, Effect effect)
+        {
+            Game1.graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+            Game1.graphics.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            Game1.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.LinearClamp;
+            Game1.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
+
+
+            effect.Parameters["view"].SetValue(view.Camera.GetView());
+            effect.Parameters["projection"].SetValue(view.GetProjectionMatrix());
+            effect.CurrentTechnique = effect.Techniques[2];
+
+
+
+            foreach (GameObject3D gameObject in view.GameObject3DList)
+            {
+                Matrix World = gameObject.GetWorldMatrix();
+                effect.Parameters["world"].SetValue(World);
+                foreach (ModelMesh mesh in gameObject.Model.Meshes)
+                {
+                    int passCount = effect.CurrentTechnique.Passes.Count;
+                    for (int i = 0; i < passCount; i++)
+                    {
+                        // EffectPass.Apply will update the device to
+                        // begin using the state information defined in the current pass
+                        effect.CurrentTechnique.Passes[i].Apply();
+
+                        foreach (ModelMeshPart meshPart in mesh.MeshParts)
+                        {
+                            meshPart.Effect = effect;
+                            effect.Parameters["ambientLightColor"].SetValue(
+                                new Vector4(0, 0, 0, 255));
+                            effect.Parameters["diffuseLightColor"].SetValue(
+                                Color.CornflowerBlue.ToVector4());
+                            effect.Parameters["specularLightColor"].SetValue(
+                                Color.White.ToVector4());
+                            effect.Parameters["ModelTexture"].SetValue(gameObject.Texture);
+                        }
+                        mesh.Draw();
+                    }
+                }
+            }
+        }
     }
 }
