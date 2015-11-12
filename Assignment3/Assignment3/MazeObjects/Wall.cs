@@ -6,6 +6,9 @@ using System.Text;
 
 namespace Assignment3.MazeObjects
 {
+    /// <summary>
+    /// Walls of the Maze
+    /// </summary>
     public class Wall : GameObjects.GameObject3D
     {
         public Wall()

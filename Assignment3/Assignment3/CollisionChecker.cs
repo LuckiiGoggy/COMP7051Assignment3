@@ -17,6 +17,9 @@ using Assignment3.GameObjects;
 
 namespace Assignment3
 {
+    /// <summary>
+    /// Handles the Collision between objects.
+    /// </summary>
     public class CollisionChecker
     {
 
@@ -27,6 +30,9 @@ namespace Assignment3
             GameObjectList = gameObject;
         }
 
+        /// <summary>
+        /// Creates the bounding boxes of the objects
+        /// </summary>
         public void CreateBoxes()
         {
             foreach (GameObject3D obj in GameObjectList)
@@ -35,6 +41,12 @@ namespace Assignment3
             }
         }
 
+        /// <summary>
+        /// Creates a bounding box for an model
+        /// </summary>
+        /// <param name="model">Model that the bounding box will be created for</param>
+        /// <param name="worldTransform">Position of the Model</param>
+        /// <returns>A Bounding box for the model</returns>
         public BoundingBox CreateBoundingBox(Model model, Matrix worldTransform)
         {
 
@@ -63,6 +75,11 @@ namespace Assignment3
             return new BoundingBox(min, max);
         }
 
+        /// <summary>
+        /// Check if a collision occured
+        /// </summary>
+        /// <param name="cameraPosition"> Position of the Camera</param>
+        /// <returns>True if a collision occured</returns>
         public bool CheckCollision(Vector3 cameraPosition)
         {
             foreach (BoundingBox box in BoundingBoxes)
