@@ -22,7 +22,7 @@ namespace Assignment3
         float lightIntensity = 1;
         public void Day()
         {
-            lightIntensity = 1;
+            lightIntensity = 2f;
         }
 
         public void Night()
