@@ -23,7 +23,7 @@ namespace Assignment3
         public Vector3 Reference { get; set; }
 
 
-        Matrix rotationMatrix;
+        public Matrix rotationMatrix;
         Vector3 transformedReference;
 
         public Matrix View { get; set; }

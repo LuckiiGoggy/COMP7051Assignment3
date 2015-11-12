@@ -22,7 +22,7 @@ namespace Assignment3
         float lightIntensity = 1;
         public void Day()
         {
-            lightIntensity = 20;
+            lightIntensity = 1;
         }
 
         public void Night()
@@ -56,6 +56,7 @@ namespace Assignment3
                         effect.AmbientLightColor = new Vector3(lightIntensity, lightIntensity, lightIntensity);
                         effect.DirectionalLight0.Direction = new Vector3(0, 0, 0);
                         effect.DirectionalLight0.SpecularColor = new Vector3(0, 0, 0);
+                        effect.FogEnabled = true;
                         Game1.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.LinearClamp;
                     }
 
@@ -71,9 +72,6 @@ namespace Assignment3
             Game1.graphics.GraphicsDevice.SamplerStates[0] = SamplerState.LinearClamp;
             Game1.graphics.GraphicsDevice.RasterizerState = RasterizerState.CullCounterClockwise;
 
-
-            effect.Parameters["view"].SetValue(view.Camera.GetView());
-            effect.Parameters["projection"].SetValue(view.GetProjectionMatrix());
             effect.CurrentTechnique = effect.Techniques[2];
 
 
@@ -82,6 +80,8 @@ namespace Assignment3
             {
                 Matrix World = gameObject.GetWorldMatrix();
                 effect.Parameters["world"].SetValue(World);
+                effect.Parameters["view"].SetValue(view.Camera.GetView());
+                effect.Parameters["projection"].SetValue(view.GetProjectionMatrix());
                 foreach (ModelMesh mesh in gameObject.Model.Meshes)
                 {
                     int passCount = effect.CurrentTechnique.Passes.Count;
@@ -94,12 +94,9 @@ namespace Assignment3
                         foreach (ModelMeshPart meshPart in mesh.MeshParts)
                         {
                             meshPart.Effect = effect;
-                            effect.Parameters["ambientLightColor"].SetValue(
-                                new Vector4(0, 0, 0, 255));
-                            effect.Parameters["diffuseLightColor"].SetValue(
-                                Color.CornflowerBlue.ToVector4());
-                            effect.Parameters["specularLightColor"].SetValue(
-                                Color.White.ToVector4());
+                            effect.Parameters["ambientLightColor"].SetValue(new Vector4(lightIntensity, lightIntensity, lightIntensity, lightIntensity));
+                            effect.Parameters["diffuseLightColor"].SetValue(Color.White.ToVector4());
+                            effect.Parameters["specularLightColor"].SetValue(Color.White.ToVector4());
                             effect.Parameters["ModelTexture"].SetValue(gameObject.Texture);
                         }
                         mesh.Draw();

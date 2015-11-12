@@ -115,7 +115,7 @@ namespace Assignment3
             effect.Parameters["ambientLightColor"].SetValue(
                 new Vector4(255, 255, 255, 0));
             effect.Parameters["diffuseLightColor"].SetValue(
-                Color.CornflowerBlue.ToVector4());
+                Color.Red.ToVector4());
             effect.Parameters["specularLightColor"].SetValue(
                 Color.White.ToVector4());
 
@@ -124,10 +124,11 @@ namespace Assignment3
             // initial camera position.
             effect.Parameters["lightPosition"].SetValue(
                 new Vector3(0f, 1f, 0f));
+            effect.Parameters["lightRotation"].SetValue(view.Camera.rotationMatrix);
 
 
-            effect.Parameters["FullStrengthDistance"].SetValue(0.001f);
-            effect.Parameters["MaxDistance"].SetValue(10);
+            effect.Parameters["FullStrengthDistance"].SetValue(0.5f);
+            effect.Parameters["MaxDistance"].SetValue(1);
 
             colChecker = new CollisionChecker(view.GameObject3DList);
             colChecker.CreateBoxes();
@@ -302,6 +303,7 @@ namespace Assignment3
             view.Camera.Position = avatarPosition;
 
             effect.Parameters["lightPosition"].SetValue(avatarPosition);
+            effect.Parameters["lightRotation"].SetValue(view.Camera.rotationMatrix);
             view.Camera.UpdateCamera(avatarYaw, avatarPitch);
          
             // TODO: Add your update logic here

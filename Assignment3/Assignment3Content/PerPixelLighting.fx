@@ -5,9 +5,14 @@ float3 cameraPosition;
 
 //light properties
 float3 lightPosition;
+float4x4 lightRotation;
 float4 ambientLightColor;
 float4 diffuseLightColor;
 float4 specularLightColor;
+
+float3 LightDirection = float3(0, 1, 0);
+float ConeAngle = 10;
+float LightFalloff = 1;
 
 //material properties
 float specularPower;
@@ -17,6 +22,9 @@ float specularIntensity;
 float FullStrengthDistance;
 float MaxDistance;
 
+float FogStart = 5;
+float FogEnd   = 10;
+bool  FogEnabled = true;
 
 
 //////////////////////////////////////////////////////////////
@@ -189,7 +197,7 @@ float4 DiffuseOnlyPS(PixelShaderInputPerPixelDiffuse input) : COLOR
 	//calculate per-pixel diffuse
 	float3 directionToLight = normalize(lightPosition - input.WorldPosition);
 	float diffuseIntensity = saturate(dot(directionToLight, input.WorldNormal));
-	float4 diffuse = diffuseLightColor * diffuseIntensity;
+	float4 diffuse = diffuseLightColor;
 
 		float4 color = diffuse + ambientLightColor;
 		color.a = 1.0;
@@ -211,15 +219,21 @@ float4 DiffuseAndPhongPS(PixelShaderInputPerPixelDiffuse input) : COLOR
 	float3 directionToLight = normalize(lightPosition - input.WorldPosition);
 	float diffuseIntensity = 0;
 	float distanceToLight = distance(lightPosition, input.WorldPosition);
-	if (distanceToLight < FullStrengthDistance)
-		diffuseIntensity = saturate(dot(directionToLight, input.WorldNormal));
-	else if (distanceToLight < MaxDistance)
-	{
-		diffuseIntensity = saturate(dot(directionToLight, input.WorldNormal));
-		diffuseIntensity *= 1 - ((distanceToLight - FullStrengthDistance) / (MaxDistance - FullStrengthDistance));
-	}
+	float4 diffuse = 0;
 
-	float4 diffuse = diffuseLightColor * diffuseIntensity;
+	float3 spotCenterVec = normalize(mul(LightDirection, -lightRotation));
+	//calculate the angle between the spot center and the direction to light
+	float3 dirLight = normalize(lightPosition - input.WorldPosition);
+	//Check if the angle is within the cone's angle
+	float angle = degrees(acos(dot(dirLight, spotCenterVec)));
+	//If it is set the diffuse to 1
+	if (angle < ConeAngle)
+	{
+		diffuseIntensity = 1 - (angle / ConeAngle);
+		diffuse = diffuseLightColor * diffuseIntensity;
+
+	}
+	//float4 diffuse = diffuseLightColor * saturate(dot(directionToLight, normalize(input.WorldNormal))) * att;
 
 	//calculate Phong components per-pixel
 	float3 reflectionVector = normalize(reflect(-directionToLight, input.WorldNormal));
@@ -234,10 +248,20 @@ float4 DiffuseAndPhongPS(PixelShaderInputPerPixelDiffuse input) : COLOR
 	float4 textureColor = tex2D(textureSampler, input.TextureCoordinate);
 	textureColor.a = 1;
 
-	float4 texColor = textureColor * (input.Color);
-	texColor *= diffuseIntensity;
+	
+
+	float4 texColor = textureColor * input.Color;
+	
+	float fog = 1;
+	if (FogEnabled)
+	{
+			fog = 1 - (distanceToLight / FogEnd);
+	}
+
+	//texColor *= diffuseIntensity;
+	//texColor.a = ambience.a;
 	//all color components are summed in the pixel shader
-	float4 color = saturate(texColor + diffuse + ambientLightColor);// +specular);//specular + diffuse + ambientLightColor;
+	float4 color = (texColor * ambientLightColor + diffuse) * fog;//saturate(texColor + diffuse); // + ambientLightColor);// +specular);//specular + diffuse + ambientLightColor;
 	color.a = 1.0;
 	
 	return color;
