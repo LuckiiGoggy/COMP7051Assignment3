@@ -7,6 +7,9 @@ using System.Text;
 
 namespace Assignment3.Utilities
 {
+    /// <summary>
+    /// Libaray of Models to be used in the game.
+    /// </summary>
     public class ModelLibrary
     {
         public static Dictionary<String, Model> Models = new Dictionary<String, Model>();

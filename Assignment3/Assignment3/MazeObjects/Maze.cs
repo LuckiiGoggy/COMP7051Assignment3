@@ -6,10 +6,15 @@ using System.Text;
 
 namespace Assignment3.MazeObjects
 {
+    /// <summary>
+    /// The Maze View handles the rendering and creation of the maze.
+    /// </summary>
     class Maze : View
     {
 
-
+        /// <summary>
+        /// Constructor of Maze View.
+        /// </summary>
         public Maze()
             : base(Game1.Wind.ClientBounds.Width, Game1.Wind.ClientBounds.Height)
         {
