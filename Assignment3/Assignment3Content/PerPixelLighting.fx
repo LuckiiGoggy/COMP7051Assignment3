@@ -19,6 +19,7 @@ float specularPower;
 float specularIntensity;
 
 //flashlight properties
+float FlashLightOn = true;
 float FullStrengthDistance;
 float MaxDistance;
 
@@ -227,7 +228,7 @@ float4 DiffuseAndPhongPS(PixelShaderInputPerPixelDiffuse input) : COLOR
 	//Check if the angle is within the cone's angle
 	float angle = degrees(acos(dot(dirLight, spotCenterVec)));
 	//If it is set the diffuse to 1
-	if (angle < ConeAngle)
+	if (angle < ConeAngle && FlashLightOn)
 	{
 		diffuseIntensity = 1 - (angle / ConeAngle);
 		diffuse = diffuseLightColor * diffuseIntensity;
