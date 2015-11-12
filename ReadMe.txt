@@ -19,25 +19,3 @@ Left Arrow and Right Arrow are used to rotate left and right
 "C" OR "Z to zoom out (Cant really get capital Z to work)
 
 "G" to turn toggle fog 
-
-"F" to toggle flashlight
-
-GamePad Controller:
-
-"Right stick" to rotate around
-
-"Left STick" to move around
-
-"A" zoom out
-
-"B" zoom in
-
-"Y" to let player go through wall
-
-"Start" to reset player's position
-
-"Right shoulder" to toggle fog
-
-"Right trigger" to toggle flashlight
-
-"Left Shoulder" to toggle day and night
