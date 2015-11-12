@@ -28,6 +28,8 @@ namespace Assignment3
         float rotationSpeed = 2f / 60f;
         float forwardSpeed = 5f / 60f;
 
+        public static InputState input = new InputState();
+
         public static Renderer3D Renderer3D = new Renderer3D();
 
         public static ModelLibrary ModelLib = new ModelLibrary();
@@ -145,20 +147,22 @@ namespace Assignment3
 
         public void UpdatePosition()
         {
-            KeyboardState keyboardState = Keyboard.GetState();
-            GamePadState currentState = GamePad.GetState(PlayerIndex.One);
 
-            if (keyboardState.IsKeyDown(Keys.Left))
+            #region Camera Rotation
+            if (input.IsKeyDown(Keys.Left)) avatarYaw += rotationSpeed;// Rotate left.
+            if (input.IsKeyDown(Keys.Right)) avatarYaw -= rotationSpeed;// Rotate right.
+            if (input.RightStick.X != 0) avatarYaw -= input.RightStick.X * rotationSpeed;
+            if (input.RightStick.Y != 0)
             {
-                // Rotate left.
-                avatarYaw += rotationSpeed;
-            }
-            if (keyboardState.IsKeyDown(Keys.Right))
-            {
-                // Rotate right.
-                avatarYaw -= rotationSpeed;
-            }
-            if (keyboardState.IsKeyDown(Keys.W) || currentState.ThumbSticks.Left.Y > 0f)
+                avatarPitch += input.RightStick.Y * rotationSpeed;
+                if (Math.Abs(avatarPitch) > 0.3) avatarPitch = currentavatarPitch;
+
+                currentavatarPitch = avatarPitch;
+            } 
+            #endregion
+
+
+            if (input.IsKeyDown(Keys.W) || input.LeftStick.Y > 0.5f)
             {
                 Matrix forwardMovement = Matrix.CreateRotationZ(avatarYaw);
                 v = new Vector3(0, forwardSpeed, 0);
@@ -176,7 +180,7 @@ namespace Assignment3
 
                 }
             }
-            if (keyboardState.IsKeyDown(Keys.S) || currentState.ThumbSticks.Left.Y < 0f)
+            if (input.IsKeyDown(Keys.S) || input.LeftStick.Y < 0f)
             {
                 Matrix forwardMovement = Matrix.CreateRotationZ(avatarYaw);
                 v = new Vector3(0, -forwardSpeed, 0);
@@ -196,7 +200,7 @@ namespace Assignment3
                 }
               
             }
-            if (keyboardState.IsKeyDown(Keys.A) || currentState.ThumbSticks.Left.X < 0f)
+            if (input.IsKeyDown(Keys.A) || input.LeftStick.X < 0f)
             {
                 Matrix forwardMovement = Matrix.CreateRotationZ(avatarYaw);
                 v = new Vector3(-forwardSpeed, 0, 0);
@@ -217,7 +221,7 @@ namespace Assignment3
 
                 
             }
-            if (keyboardState.IsKeyDown(Keys.D) || currentState.ThumbSticks.Left.X > 0f)
+            if (input.IsKeyDown(Keys.D) || input.LeftStick.X > 0f)
             {
                 Matrix forwardMovement = Matrix.CreateRotationZ(avatarYaw);
                 v = new Vector3(forwardSpeed, 0, 0);
@@ -236,32 +240,18 @@ namespace Assignment3
                 }
             }
 
-            if (currentState.ThumbSticks.Right.X != 0)
-            {
-                avatarYaw -= currentState.ThumbSticks.Right.X * rotationSpeed;
-            }
 
-            if (currentState.ThumbSticks.Right.Y != 0)
-            {
-                avatarPitch += currentState.ThumbSticks.Right.Y * rotationSpeed;
-                if (Math.Abs(avatarPitch) > 0.3)
-                    avatarPitch = currentavatarPitch;
-                
-                currentavatarPitch = avatarPitch;
-            }
 
-            if (keyboardState.IsKeyDown(Keys.X) || (currentState.Buttons.Y == ButtonState.Pressed) &&(gState.Buttons.Y != ButtonState.Pressed ))
-            {
-                XrayMode = !XrayMode;
-            }
+            if (input.IsKeyTapped(Keys.X) || input.IsButtonTapped(Buttons.Y)) XrayMode = !XrayMode;
+            
            
-            if (keyboardState.IsKeyDown(Keys.Z) || (currentState.Buttons.B == ButtonState.Pressed))
+            if (input.IsKeyDown(Keys.Z) || input.IsButtonDown(Buttons.B))
             {
 
                 if (view.ZoomFactor > 0.1)
                     view.ZoomFactor -= 0.1f;
                     
-            } else if ((keyboardState.IsKeyDown(Keys.Z) && keyboardState.IsKeyDown(Keys.LeftShift)) || keyboardState.IsKeyDown(Keys.C) || (currentState.Buttons.A == ButtonState.Pressed))
+            } else if ((input.IsKeyDown(Keys.Z) && input.IsKeyDown(Keys.LeftShift)) || input.IsKeyDown(Keys.C) || input.IsButtonDown(Buttons.A))
                 {
                     if (view.ZoomFactor < 2)
                     {
@@ -269,7 +259,7 @@ namespace Assignment3
                        
                     }
                 }
-            if (keyboardState.IsKeyDown(Keys.Home) || (currentState.Buttons.Start == ButtonState.Pressed) && (gState.Buttons.Start != ButtonState.Pressed))
+            if (input.IsKeyDown(Keys.Home) || input.IsButtonTapped(Buttons.Start))
             {
                 avatarPosition = new Vector3(-3, 2, 0);
                 view.ZoomFactor = MathHelper.PiOver4;
@@ -277,13 +267,10 @@ namespace Assignment3
                 avatarPitch = 0;
             }
 
-            if (keyboardState.IsKeyDown(Keys.L) && !kState.IsKeyDown(Keys.L))
-            {
-                night = !night;
-            }
+            if (input.IsKeyTapped(Keys.L) || input.IsButtonTapped(Buttons.LeftShoulder)) night = !night;
+            if (input.IsKeyTapped(Keys.G) || input.IsButtonTapped(Buttons.RightShoulder)) effect.Parameters["FogEnabled"].SetValue(!effect.Parameters["FogEnabled"].GetValueBoolean());
+            if (input.IsKeyTapped(Keys.F) || input.IsButtonTapped(Buttons.RightTrigger)) effect.Parameters["FlashLightOn"].SetValue(!effect.Parameters["FlashLightOn"].GetValueBoolean());
 
-            gState = currentState;
-            kState = keyboardState;
         }
 
         /// <summary>
@@ -293,8 +280,9 @@ namespace Assignment3
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            input.UpdateState();
             // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+            if (input.IsButtonDown(Buttons.Back) || input.IsKeyDown(Keys.Escape))
                 this.Exit();
 
             UpdatePosition();
@@ -304,6 +292,7 @@ namespace Assignment3
 
             effect.Parameters["lightPosition"].SetValue(avatarPosition);
             effect.Parameters["lightRotation"].SetValue(view.Camera.rotationMatrix);
+            
             view.Camera.UpdateCamera(avatarYaw, avatarPitch);
          
             // TODO: Add your update logic here
