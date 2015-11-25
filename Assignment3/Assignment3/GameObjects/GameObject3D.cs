@@ -20,8 +20,8 @@ namespace Assignment3.GameObjects
         public Vector3 Position { get; set; }
         public Vector3 Rotation { get; set; }
         public Vector3 Scale { get; set; }
-        public Model Model { get; private set; }
-        public Texture2D Texture { get; private set; }
+        public Model Model { get; protected set; }
+        public Texture2D Texture { get; protected set; }
 
         public GameObject3D()
         {
@@ -53,5 +53,9 @@ namespace Assignment3.GameObjects
                 Matrix.CreateRotationZ(Rotation.Z) * Matrix.CreateTranslation(Position);
         }
 
+        public virtual void Update(GameTime gameTime)
+        {
+
+        }
     }
 }

@@ -12,6 +12,8 @@ namespace Assignment3.MazeObjects
     class Maze : View
     {
 
+        public int[,] m_MazeMap;
+
         /// <summary>
         /// Constructor of Maze View.
         /// </summary>
@@ -21,8 +23,8 @@ namespace Assignment3.MazeObjects
 
 
 
-            int[,] mazeSpec = {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                               {0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1},
+            int [,] mazeSpec = {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+                               {2, 0, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1},
                                {1, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1},
                                {1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 1, 1},
                                {1, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 0, 0, 1},
@@ -40,6 +42,11 @@ namespace Assignment3.MazeObjects
             {
                 for (int col = 0; col < mazeSpec.GetLength(1); col++)
                 {
+                    if (mazeSpec[row, col] == 2)
+                    {
+                        Add(new Frog(new Vector3(2 * col, 2 * row, 0), new Vector2(row, col)));
+                        Add(new Floor(new Vector3(2 * col, 2 * row, -1)));
+                    }
                     if(mazeSpec[row,col] == 1)
                         Add(new Wall(new Vector3(2 * col, 2 * row, 0)));
                     if (mazeSpec[row, col] == 0)
@@ -47,7 +54,39 @@ namespace Assignment3.MazeObjects
                 }
             }
 
+            m_MazeMap = mazeSpec;
+        }
 
+        public List<Vector2> GetAdjacentCells(Vector2 centerPos)
+        {
+            List<Vector2> result = new List<Vector2>();
+            int[] rows = {(int)centerPos.X - 1, (int)centerPos.X + 1, (int)centerPos.X - 1, (int)centerPos.X + 1};
+            int[] cols = {(int)centerPos.Y - 1, (int)centerPos.Y + 1, (int)centerPos.Y + 1, (int)centerPos.Y - 1};
+
+
+            for (int i = 0; i < rows.Length; i++)
+            {
+                if (rows[i] >= 0 && cols[i] >= 0) result.Add(new Vector2(rows[i], cols[i]));
+            }
+
+            return result;
+        }
+
+        public List<Vector2> GetAdjacentAvailableCells(Vector2 centerPos)
+        {
+            List<Vector2> result = new List<Vector2>();
+            int[] rows = { (int)centerPos.X - 1, (int)centerPos.X + 1, (int)centerPos.X, (int)centerPos.X };
+            int[] cols = { (int)centerPos.Y, (int)centerPos.Y, (int)centerPos.Y + 1, (int)centerPos.Y - 1 };
+
+
+            for (int i = 0; i < rows.Length; i++)
+            {
+                if (rows[i] >= 0 && cols[i] >= 0) 
+                    if(m_MazeMap[rows[i], cols[i]] == 0)
+                        result.Add(new Vector2(rows[i], cols[i]));
+            }
+
+            return result;
         }
     }
 }

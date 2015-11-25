@@ -77,6 +77,7 @@
     <Compile Include="GameObjects\GameObject3D.cs" />
     <Compile Include="GameObjects\Transform3D.cs" />
     <Compile Include="MazeObjects\Floor.cs" />
+    <Compile Include="MazeObjects\Frog.cs" />
     <Compile Include="MazeObjects\Maze.cs" />
     <Compile Include="MazeObjects\Wall.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

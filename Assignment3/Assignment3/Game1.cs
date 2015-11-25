@@ -19,7 +19,7 @@ namespace Assignment3
     {
         public static GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        View view;
+        public static View view;
         Effect effect;
         Vector3 avatarPosition = new Vector3(-3, 2, 0);
         float avatarYaw = -1.6f;
@@ -38,6 +38,9 @@ namespace Assignment3
         public static Library<Model> ModelLib = new Library<Model>();
 
         public static GameWindow Wind;
+
+        public static Random rand = new Random();
+
 
         private EffectParameter cameraPositionParameter;
         private EffectParameter specularPowerParameter;
@@ -102,7 +105,7 @@ namespace Assignment3
             // TODO: use this.Content to load your game content here
 
 
-            effect = Content.Load<Effect>("PerPixelLighting");
+            effect = Content.Load<Effect>("Shaders\\PerPixelLighting");
 
 
             // cache the effect parameters
@@ -117,12 +120,9 @@ namespace Assignment3
             //
 
             // set the light colors
-            effect.Parameters["ambientLightColor"].SetValue(
-                new Vector4(255, 255, 255, 0));
-            effect.Parameters["diffuseLightColor"].SetValue(
-                Color.Red.ToVector4());
-            effect.Parameters["specularLightColor"].SetValue(
-                Color.White.ToVector4());
+            effect.Parameters["ambientLightColor"].SetValue(new Vector4(255, 255, 255, 0));
+            effect.Parameters["diffuseLightColor"].SetValue(Color.Red.ToVector4());
+            effect.Parameters["specularLightColor"].SetValue(Color.White.ToVector4());
 
             // Set the light position to a fixed location.
             // This will place the light source behind, to the right, and above the
@@ -314,6 +314,9 @@ namespace Assignment3
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
+
+            view.Update(gameTime);
+
 
             if (night)
                 Renderer3D.Night();

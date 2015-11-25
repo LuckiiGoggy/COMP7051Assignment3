@@ -30,21 +30,21 @@
     <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.VideoImporters, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="balls.fbx">
+    <Compile Include="Models\balls.fbx">
       <Name>balls</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="eye texture.jpg">
+    <Compile Include="Models\Textures\eye texture.jpg">
       <Name>eye texture</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PerPixelLighting.fx">
+    <Compile Include="Shaders\PerPixelLighting.fx">
       <Name>PerPixelLighting</Name>
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
@@ -77,10 +77,17 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PerPixelFlashLight.fx">
+    <Compile Include="Shaders\PerPixelFlashLight.fx">
       <Name>PerPixelFlashLight</Name>
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Models\DerpyFrog.fbx">
+      <Name>DerpyFrog</Name>
+      <Importer>FbxImporter</Importer>
+      <Processor>ModelProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
