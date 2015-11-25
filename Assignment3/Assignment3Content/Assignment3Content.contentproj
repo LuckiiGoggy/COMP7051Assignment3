@@ -49,31 +49,38 @@
       <Importer>EffectImporter</Importer>
       <Processor>EffectProcessor</Processor>
     </Compile>
-    <Compile Include="MazeWall.png">
-      <Name>MazeWall</Name>
+    <Compile Include="Models\Textures\WallTex.png">
+      <Name>WallTex</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MazeWallModel.fbx">
+    <Compile Include="Models\MazeWallModel.fbx">
       <Name>MazeWallModel</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MazeFloorModel.fbx">
+    <Compile Include="Models\MazeFloorModel.fbx">
       <Name>MazeFloorModel</Name>
       <Importer>FbxImporter</Importer>
       <Processor>ModelProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MazeFloor.png">
-      <Name>MazeFloor</Name>
+    <Compile Include="Models\Textures\FloorTex.png">
+      <Name>FloorTex</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="PerPixelFlashLight.fx">
+      <Name>PerPixelFlashLight</Name>
+      <Importer>EffectImporter</Importer>
+      <Processor>EffectProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />

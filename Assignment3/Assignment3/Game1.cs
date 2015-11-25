@@ -32,8 +32,11 @@ namespace Assignment3
 
         public static Renderer3D Renderer3D = new Renderer3D();
 
-        public static ModelLibrary ModelLib = new ModelLibrary();
-        public static TextureLibrary TexLib = new TextureLibrary();
+        //public static ModelLibrary ModelLib = new ModelLibrary();
+        //public static TextureLibrary TexLib = new TextureLibrary();
+        public static Library<Texture2D> TexLib = new Library<Texture2D>();
+        public static Library<Model> ModelLib = new Library<Model>();
+
         public static GameWindow Wind;
 
         private EffectParameter cameraPositionParameter;
@@ -89,8 +92,8 @@ namespace Assignment3
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            ModelLib.InitModelLibrary(Content);
-            TexLib.InitTextureLibrary(Content);
+            ModelLib.LoadContent(Content, "Models");
+            TexLib.LoadContent(Content, "Models\\Textures");
 
      
             //view = new View(this.Window.ClientBounds.Width, this.Window.ClientBounds.Height);

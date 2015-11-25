@@ -83,9 +83,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Renderer3D.cs" />
+    <Compile Include="Utilities\Library.cs" />
     <Compile Include="Utilities\InputState.cs" />
-    <Compile Include="Utilities\ModelLibrary.cs" />
-    <Compile Include="Utilities\TextureLibrary.cs" />
     <Compile Include="View.cs" />
   </ItemGroup>
   <ItemGroup>
