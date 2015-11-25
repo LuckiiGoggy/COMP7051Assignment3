@@ -52,6 +52,8 @@ namespace Assignment3
         public float zoomFactor = 0.5f;
         GamePadState gState;
         KeyboardState kState;
+        int stepCounter;
+        public static SoundPlayer soundPlayer = new SoundPlayer();
 
         bool night = false;
         public Game1()
@@ -95,13 +97,14 @@ namespace Assignment3
             ModelLib.LoadContent(Content, "Models");
             TexLib.LoadContent(Content, "Models\\Textures");
 
+            soundPlayer.InitSoundLibrary(Content);
      
             //view = new View(this.Window.ClientBounds.Width, this.Window.ClientBounds.Height);
             view = new MazeObjects.Maze();
             //view.Add(new GameObjects.GameObject3D(ModelLib.Get("Ball"), TexLib.Get("EyeTex")));
             // TODO: use this.Content to load your game content here
 
-
+            
             effect = Content.Load<Effect>("PerPixelLighting");
 
 
@@ -137,6 +140,10 @@ namespace Assignment3
 
             colChecker = new CollisionChecker(view.GameObject3DList);
             colChecker.CreateBoxes();
+
+            stepCounter = 0;
+
+            soundPlayer.LoopMusic("BG1");
         }
         
         /// <summary>
@@ -148,7 +155,7 @@ namespace Assignment3
             // TODO: Unload any non ContentManager content here
         }
 
-        public void UpdatePosition()
+        public void UpdatePosition(GameTime time)
         {
 
             #region Camera Rotation
@@ -164,9 +171,16 @@ namespace Assignment3
             } 
             #endregion
 
+            if (input.IsKeyDown(Keys.W) || input.IsKeyDown(Keys.S) || input.IsKeyDown(Keys.D) || input.IsKeyDown(Keys.A))
+            {
+
+                stepCounter += (int)time.ElapsedGameTime.Milliseconds;
+            }
+                
 
             if (input.IsKeyDown(Keys.W) || input.LeftStick.Y > 0.5f)
             {
+               
                 Matrix forwardMovement = Matrix.CreateRotationZ(avatarYaw);
                 v = new Vector3(0, forwardSpeed, 0);
                 v = Vector3.Transform(v, forwardMovement);
@@ -185,6 +199,7 @@ namespace Assignment3
             }
             if (input.IsKeyDown(Keys.S) || input.LeftStick.Y < 0f)
             {
+                
                 Matrix forwardMovement = Matrix.CreateRotationZ(avatarYaw);
                 v = new Vector3(0, -forwardSpeed, 0);
                 v = Vector3.Transform(v, forwardMovement);
@@ -205,6 +220,7 @@ namespace Assignment3
             }
             if (input.IsKeyDown(Keys.A) || input.LeftStick.X < 0f)
             {
+               
                 Matrix forwardMovement = Matrix.CreateRotationZ(avatarYaw);
                 v = new Vector3(-forwardSpeed, 0, 0);
                 v = Vector3.Transform(v, forwardMovement);
@@ -226,6 +242,8 @@ namespace Assignment3
             }
             if (input.IsKeyDown(Keys.D) || input.LeftStick.X > 0f)
             {
+              
+                
                 Matrix forwardMovement = Matrix.CreateRotationZ(avatarYaw);
                 v = new Vector3(forwardSpeed, 0, 0);
                 v = Vector3.Transform(v, forwardMovement);
@@ -274,6 +292,8 @@ namespace Assignment3
             if (input.IsKeyTapped(Keys.G) || input.IsButtonTapped(Buttons.RightShoulder)) effect.Parameters["FogEnabled"].SetValue(!effect.Parameters["FogEnabled"].GetValueBoolean());
             if (input.IsKeyTapped(Keys.F) || input.IsButtonTapped(Buttons.RightTrigger)) effect.Parameters["FlashLightOn"].SetValue(!effect.Parameters["FlashLightOn"].GetValueBoolean());
 
+            if (stepCounter % 21 == 0 && stepCounter > 10)
+                soundPlayer.PlaySoundEffect("footstep");
         }
 
         /// <summary>
@@ -288,7 +308,7 @@ namespace Assignment3
             if (input.IsButtonDown(Buttons.Back) || input.IsKeyDown(Keys.Escape))
                 this.Exit();
 
-            UpdatePosition();
+            UpdatePosition(gameTime);
 
             //Console.WriteLine(avatarPosition.ToString());
             view.Camera.Position = avatarPosition;

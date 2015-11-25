@@ -85,6 +85,7 @@
     <Compile Include="Renderer3D.cs" />
     <Compile Include="Utilities\Library.cs" />
     <Compile Include="Utilities\InputState.cs" />
+    <Compile Include="Utilities\SoundPlayer.cs" />
     <Compile Include="View.cs" />
   </ItemGroup>
   <ItemGroup>

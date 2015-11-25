@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Assignment3.GameObjects;
 namespace Assignment3.MazeObjects
 {
     /// <summary>
@@ -46,8 +46,6 @@ namespace Assignment3.MazeObjects
                         Add(new Floor(new Vector3(2 * col, 2 * row, -1)));
                 }
             }
-
-
         }
     }
 }
