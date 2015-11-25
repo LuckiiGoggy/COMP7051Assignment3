@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using Assignment3.GameObjects;
 namespace Assignment3.MazeObjects
 {
     /// <summary>
