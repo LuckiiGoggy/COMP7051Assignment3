@@ -288,7 +288,21 @@ namespace Assignment3
                 avatarPitch = 0;
             }
 
-            if (input.IsKeyTapped(Keys.L) || input.IsButtonTapped(Buttons.LeftShoulder)) night = !night;
+            if (input.IsKeyTapped(Keys.L) || input.IsButtonTapped(Buttons.LeftShoulder))
+            {
+                night = !night;
+                if (night)
+                {
+                    soundPlayer.StopMusic();
+                    soundPlayer.LoopMusic("BG2");
+                }
+                else
+                {
+                    soundPlayer.StopMusic();
+                    soundPlayer.LoopMusic("BG1");
+                }
+            }
+
             if (input.IsKeyTapped(Keys.G) || input.IsButtonTapped(Buttons.RightShoulder)) effect.Parameters["FogEnabled"].SetValue(!effect.Parameters["FogEnabled"].GetValueBoolean());
             if (input.IsKeyTapped(Keys.F) || input.IsButtonTapped(Buttons.RightTrigger)) effect.Parameters["FlashLightOn"].SetValue(!effect.Parameters["FlashLightOn"].GetValueBoolean());
 
@@ -333,12 +347,20 @@ namespace Assignment3
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            
 
-            if (night)
+            if (night){
                 Renderer3D.Night();
+                GraphicsDevice.Clear(Color.Black);
+                
+            }
             else
+            {
                 Renderer3D.Day();
+                GraphicsDevice.Clear(Color.CornflowerBlue);
+               
+            }
+                
             SetSharedEffectParameters();
             //Renderer3D.Render(view);
             Renderer3D.Render(view, effect);

@@ -24,6 +24,7 @@ namespace Assignment3.Utilities
         public void InitSoundLibrary(ContentManager Content)
         {
             Musics.Add("BG1", Content.Load<Song>("Music\\nothing_it_can"));
+            Musics.Add("BG2", Content.Load<Song>("Music\\Maze_Ambience"));
             SoundEffects.Add("footstep", Content.Load<SoundEffect>("Music\\single_footstep"));
         }
 
@@ -47,7 +48,7 @@ namespace Assignment3.Utilities
             if (!SoundEffects.ContainsKey(name)) throw new MissingSoundEffectException("MissingSoundEffect: " + name);
             SoundEffectInstance inst = SoundEffects[name].CreateInstance();
             inst.Volume = 1.0f;
-            SoundEffects[name].Play(1f, 0.0f, 0.0f);
+            SoundEffects[name].Play(0.5f, 0.0f, 0.0f);
         }
         
     }
