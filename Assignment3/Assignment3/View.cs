@@ -49,5 +49,12 @@ namespace Assignment3
         {
             return Matrix.CreatePerspectiveFieldOfView(ZoomFactor, Width / Height, 0.1f, 99999f);
         }
+
+        public virtual void Update(GameTime gameTime)
+        {
+            if (GameObject3DList.Count > 0)
+                foreach (GameObject3D obj in GameObject3DList)
+                    obj.Update(gameTime);
+        }
     }
 }

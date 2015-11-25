@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <ProjectGuid>{E6343ADE-78DC-4AD7-88B8-F9670893F27E}</ProjectGuid>
+    <ProjectGuid>{F0B3BD50-4539-4B76-8114-292971511B04}</ProjectGuid>
     <ProjectTypeGuids>{96E2B04D-8817-42c6-938A-82C39BA4D311};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -19,7 +19,7 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup>
-    <RootNamespace>Assignment3Content</RootNamespace>
+    <RootNamespace>Assgn02Content</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.EffectImporter, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
@@ -30,92 +30,58 @@
     <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.VideoImporters, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\balls.fbx">
-      <Name>balls</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Models\Textures\eye texture.jpg">
-      <Name>eye texture</Name>
+    <Compile Include="..\Img\Ball.png">
+      <Link>Ball.png</Link>
+      <Name>Ball</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Shaders\PerPixelLighting.fx">
-      <Name>PerPixelLighting</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
-    </Compile>
-    <Compile Include="Models\Textures\WallTex.png">
-      <Name>WallTex</Name>
+    <Compile Include="..\Img\Block.png">
+      <Link>Block.png</Link>
+      <Name>Block</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\MazeWallModel.fbx">
-      <Name>MazeWallModel</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Models\MazeFloorModel.fbx">
-      <Name>MazeFloorModel</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Models\Textures\FloorTex.png">
-      <Name>FloorTex</Name>
+    <Compile Include="..\Img\Paddle.png">
+      <Link>Paddle.png</Link>
+      <Name>Paddle</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Shaders\PerPixelFlashLight.fx">
-      <Name>PerPixelFlashLight</Name>
-      <Importer>EffectImporter</Importer>
-      <Processor>EffectProcessor</Processor>
+    <Compile Include="Courier New.spritefont">
+      <Name>Courier New</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\DerpyFrog.fbx">
-      <Name>DerpyFrog</Name>
-      <Importer>FbxImporter</Importer>
-      <Processor>ModelProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Models\Textures\Cube_001.jpg">
-      <Name>Cube_001</Name>
+    <Compile Include="..\Img\WinScreen.png">
+      <Link>WinScreen.png</Link>
+      <Name>WinScreen</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Music\nothing_it_can.mp3">
-      <Name>nothing_it_can</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
+    <Compile Include="..\Img\LoseScreen.png">
+      <Link>LoseScreen.png</Link>
+      <Name>LoseScreen</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Music\single_footstep.mp3">
-      <Name>single_footstep</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Music\Maze_Ambience.mp3">
-      <Name>Maze_Ambience</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
+    <Compile Include="..\Img\StartScreen.png">
+      <Link>StartScreen.png</Link>
+      <Name>StartScreen</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\$(XnaFrameworkVersion)\Microsoft.Xna.GameStudio.ContentPipeline.targets" />
