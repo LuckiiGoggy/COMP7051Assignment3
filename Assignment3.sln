@@ -5,7 +5,11 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assignment3", "Assignment3\Assignment3\Assignment3.csproj", "{FF57BD35-7AC3-45FC-AD7D-ACCF246CE690}"
 EndProject
-Project("{96E2B04D-8817-42C6-938A-82C39BA4D311}") = "Assignment3Content", "Assignment3\Assignment3Content\Assignment3Content.contentproj", "{E6343ADE-78DC-4AD7-88B8-F9670893F27E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assignment3Content", "Assignment3\Assignment3Content\Assignment3Content.contentproj", "{E6343ADE-78DC-4AD7-88B8-F9670893F27E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assgn02", "Assgn02\Assgn02\Assgn02.csproj", "{B82E9A94-5B6F-4D5F-99CA-FBEDBAA71E00}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assgn02Content", "Assgn02\Assgn02Content\Assgn02Content.contentproj", "{F0B3BD50-4539-4B76-8114-292971511B04}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,6 +23,12 @@ Global
 		{FF57BD35-7AC3-45FC-AD7D-ACCF246CE690}.Release|x86.Build.0 = Release|x86
 		{E6343ADE-78DC-4AD7-88B8-F9670893F27E}.Debug|x86.ActiveCfg = Debug|x86
 		{E6343ADE-78DC-4AD7-88B8-F9670893F27E}.Release|x86.ActiveCfg = Release|x86
+		{B82E9A94-5B6F-4D5F-99CA-FBEDBAA71E00}.Debug|x86.ActiveCfg = Debug|x86
+		{B82E9A94-5B6F-4D5F-99CA-FBEDBAA71E00}.Debug|x86.Build.0 = Debug|x86
+		{B82E9A94-5B6F-4D5F-99CA-FBEDBAA71E00}.Release|x86.ActiveCfg = Release|x86
+		{B82E9A94-5B6F-4D5F-99CA-FBEDBAA71E00}.Release|x86.Build.0 = Release|x86
+		{F0B3BD50-4539-4B76-8114-292971511B04}.Debug|x86.ActiveCfg = Debug|x86
+		{F0B3BD50-4539-4B76-8114-292971511B04}.Release|x86.ActiveCfg = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

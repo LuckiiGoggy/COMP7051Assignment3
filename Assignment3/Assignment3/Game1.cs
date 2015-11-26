@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
+using System.Xml;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
@@ -8,7 +10,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
-
+using Microsoft.Xna.Framework.Storage;
 using Assignment3.Utilities;
 using Assignment3.GameObjects;
 namespace Assignment3
@@ -30,6 +32,7 @@ namespace Assignment3
         float forwardSpeed = 5f / 60f;
 
         public static InputState input = new InputState();
+
 
         public static Renderer3D Renderer3D = new Renderer3D();
 
@@ -54,10 +57,9 @@ namespace Assignment3
         Vector3 v;
         bool XrayMode = true;
         public float zoomFactor = 0.5f;
-        GamePadState gState;
-        KeyboardState kState;
         int stepCounter;
         public static SoundPlayer soundPlayer = new SoundPlayer();
+
 
         bool night = false;
         public Game1()
@@ -102,6 +104,8 @@ namespace Assignment3
             TexLib.LoadContent(Content, "Models\\Textures");
 
             soundPlayer.InitSoundLibrary(Content);
+
+            
      
             //view = new View(this.Window.ClientBounds.Width, this.Window.ClientBounds.Height);
             view = new MazeObjects.Maze();
@@ -349,10 +353,16 @@ namespace Assignment3
             
             view.Camera.UpdateCamera(avatarYaw, avatarPitch);
          
-            // TODO: Add your update logic here
+
+
+
+
+
 
             base.Update(gameTime);
         }
+
+
         private void SetSharedEffectParameters()
         {
             specularPowerParameter.SetValue(specularPower);
