@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Assignment3.Utilities
+namespace Assgn01
 {
     public class SoundPlayer
     {
@@ -18,7 +18,7 @@ namespace Assignment3.Utilities
         {
             SoundEffects = new Dictionary<string, SoundEffect>();
             Musics = new Dictionary<string, Song>();
-            SoundEffectIns = new Dictionary<string,SoundEffectInstance>();
+            SoundEffectIns = new Dictionary<string, SoundEffectInstance>();
             Volume = 1f;
             MediaPlayer.IsRepeating = true;
             MediaPlayer.Volume = 0.05f;
@@ -27,70 +27,43 @@ namespace Assignment3.Utilities
         public void InitSoundLibrary(ContentManager Content)
         {
             Musics.Add("BG1", Content.Load<Song>("Music\\nothing_it_can"));
-            Musics.Add("BG2", Content.Load<Song>("Music\\Maze_Ambience"));
-            SoundEffects.Add("footstep", Content.Load<SoundEffect>("Music\\single_footstep"));
+            
+            
             SoundEffects.Add("collide", Content.Load<SoundEffect>("Music\\punch"));
-         
+
             SoundEffectIns.Add("footstepins", SoundEffects["footstep"].CreateInstance());
+
            
-            SoundEffectIns.Add("collideins",SoundEffects["collide"].CreateInstance());
 
         }
 
         public void LoopMusic(string name)
         {
-           // MediaPlayer.Volume = (0.05f);
+            // MediaPlayer.Volume = (0.05f);
             if (!Musics.ContainsKey(name)) throw new MissingMusicException("MissingMusicEffect: " + name);
             MediaPlayer.Play(Musics[name]);
         }
 
         public void PauseMusic()
         {
-            if(MediaPlayer.State == MediaState.Paused)
+            if (MediaPlayer.State == MediaState.Paused)
                 MediaPlayer.Resume();
             else
-                MediaPlayer.Pause();            
+                MediaPlayer.Pause();
         }
 
-        public void UpdateVolume()
-        {
-            if (Game1.fog)
-            {
-                MediaPlayer.Volume = 0.03f;
-
-            }
-            else if (!Game1.fog)
-            {
-                MediaPlayer.Volume = 0.12f;
-            }
-
-        }
-        public void ChangeBGVol(float z){
-            MediaPlayer.Volume = 0.1f * z;
-        }
-        public void StopMusic()
-        {
-            MediaPlayer.Stop();
-        }
         public void PlaySoundEffect(string name)
         {
             if (!SoundEffectIns.ContainsKey(name)) throw new MissingSoundEffectException("MissingSoundEffect: " + name);
 
-            if (Game1.fog)
-            {
-                SoundEffectIns[name].Volume = (float)(0.05);
+  
+            SoundEffectIns[name].Volume = (float)(0.2);
 
-            }
-            else if (!Game1.fog)
-            {
-                SoundEffectIns[name].Volume = (float)(0.2);
-            }
-            
             SoundEffectIns[name].Play();
 
             //SoundEffects[name].Play(0.3f, 0.0f, 1f);   
         }
-        
+
     }
     public class MissingSoundEffectException : Exception
     {
