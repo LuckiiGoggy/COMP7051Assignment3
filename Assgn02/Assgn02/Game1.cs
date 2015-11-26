@@ -42,10 +42,12 @@ namespace Assgn02
         Texture2D WinScreen;
         Texture2D LoseScreen;
         Texture2D StartScreen;
+        Texture2D HighScoreScreen;
 
         Boolean gameOver;
         Boolean gameWon;
         Boolean gameStarted;
+        Boolean inHighScore;
 
         StateSnapshot snapshot;
 
@@ -57,13 +59,19 @@ namespace Assgn02
         Texture2D t_paddle;
 
 
+        public static String displayText = "";
+
         public bool GameSaveRequested = false;
+        public bool GameLoadRequested = true;
         IAsyncResult result;
+
+        public static List<int> HighScores = new List<int>();
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            Components.Add(new GamerServicesComponent(this));
         }
 
         /// <summary>
@@ -103,6 +111,7 @@ namespace Assgn02
             WinScreen = this.Content.Load<Texture2D>("WinScreen");
             LoseScreen = this.Content.Load<Texture2D>("LoseScreen");
             StartScreen = this.Content.Load<Texture2D>("StartScreen");
+            HighScoreScreen = this.Content.Load<Texture2D>("HighScoreScreen");
 
             paddle = new Sprite(t_paddle, new Vector2(0, graphics.GraphicsDevice.Viewport.Height - t_paddle.Height));
             paddle.PhysType = PhysicsTransform.PhysicsType.Solid;
@@ -120,6 +129,12 @@ namespace Assgn02
             gameOver = true;
             soundPlayer.LoopMusic("BG1");
             //ResetGame();
+
+
+
+
+
+
         }
 
         /// <summary>
@@ -140,6 +155,8 @@ namespace Assgn02
         {
             //Update the input
             input.UpdateState();
+
+            if (input.IsButtonTapped(Buttons.Back) || input.IsKeyTapped(Keys.Q)) this.Exit();
 
             //Update the positions of the objects
             if (!gameStarted || gameOver)
@@ -166,6 +183,7 @@ namespace Assgn02
                     {
                         gameOver = true;
                         gameWon = false;
+                        UpdateHighScore();
                     }
                     sprite.Update(gameTime.ElapsedGameTime.Milliseconds);
                 }
@@ -181,6 +199,7 @@ namespace Assgn02
                 {
                     gameOver = true;
                     gameWon = true;
+                    UpdateHighScore();
                     soundPlayer.PauseMusic();
                 }
 
@@ -195,43 +214,56 @@ namespace Assgn02
                     console.Activate();
                 }
             }
-            else 
+            else if(!gameStarted)
             {
-                if (input.IsKeyDown(Keys.X) || input.IsButtonDown(Buttons.X)){
-                    ResetGame();
-                    //soundPlayer.PauseMusic();
+                if (input.IsKeyTapped(Keys.X) || input.IsButtonTapped(Buttons.X)) ResetGame();
+                if (input.IsButtonTapped(Buttons.Y) || input.IsKeyTapped(Keys.Y))
+                {
+                    gameStarted = true;
+                    inHighScore = true;
                 }
-                
+            }
+            else
+            {
+                if (input.IsKeyTapped(Keys.X) || input.IsButtonTapped(Buttons.X)) gameStarted = false;
             }
 
 
             // Check for button for saving
             if (input.IsButtonTapped(Buttons.Start))
             {
-                if ((GameSaveRequested == false))
+                if (!GameSaveRequested && !GameLoadRequested)
                 {
                     GameSaveRequested = true;
-                    result = StorageDevice.BeginShowSelector(
-                            PlayerIndex.One, null, null);
                 }
             }
 
-            if ((GameSaveRequested) && (result.IsCompleted))
+            if ((Guide.IsVisible) && (GameSaveRequested || GameLoadRequested))
+                result = StorageDevice.BeginShowSelector(PlayerIndex.One, null, null);
+
+
+
+            if ((Guide.IsVisible) && (GameSaveRequested || GameLoadRequested) && (result.IsCompleted))
             {
                 StorageDevice device = StorageDevice.EndShowSelector(result);
                 if (device != null && device.IsConnected)
                 {
-                    DoSaveGame(device);
-                    //DoLoadGame(device);
+                    if (GameLoadRequested)
+                    {
+                        DoLoadGame(device);
+
+                        GameLoadRequested = false;
+                    }
+                    if (GameSaveRequested)
+                    {
+                        DoSaveGame(device);
+
+                        // Reset the request flag
+                        GameSaveRequested = false;
+                    }
                 }
-                // Reset the request flag
-                GameSaveRequested = false;
             }
 
-
-            snapshot.UpdateSnapshot(Keyboard.GetState(), Mouse.GetState(), GamePad.GetState(0));
-
-            
             base.Update(gameTime);
         }
 
@@ -242,19 +274,8 @@ namespace Assgn02
             toRemove.Add(sprite);
         }
 
-
-        public struct SaveGameData
-        {
-            public List<int> Scores;
-        }
-
         private static void DoSaveGame(StorageDevice device)
         {
-            // Create the data to save.
-            SaveGameData data = new SaveGameData();
-            data.Scores = new List<int>();
-            data.Scores.Add(10);
-            data.Scores.Add(13);
 
             // Open a storage container.
             IAsyncResult result = device.BeginOpenContainer("Storage", null, null);
@@ -277,7 +298,6 @@ namespace Assgn02
             // Create the file.
             Stream stream = container.CreateFile(filename);
 
-
 #if WINDEMO
             // Convert the object to XML data and put it in the stream.
             XmlSerializer serializer = new XmlSerializer(typeof(SaveGameData));
@@ -285,10 +305,10 @@ namespace Assgn02
 #else
             using (StreamWriter sw = new StreamWriter(stream))
             {
-                foreach (int score in data.Scores)
+                foreach (int score in HighScores)
                 {
-                    System.Console.WriteLine("Avatar {0}", score);
-                    sw.WriteLine("Avatar {0}", score);
+                    System.Console.WriteLine("{0}", score);
+                    sw.WriteLine("{0}", score);
                 }
                 sw.Close();
             }
@@ -301,6 +321,75 @@ namespace Assgn02
             container.Dispose();
         }
 
+        public static int HighScoreLimit = 10;
+        private void UpdateHighScore()
+        {
+            HighScores.Add(score);
+            List<int> NewHighScores = new List<int>();
+            HighScores = HighScores.OrderByDescending(v => v).ToList();
+
+            for (int i = 0; i < HighScoreLimit && i < HighScores.Count; i++)
+                NewHighScores.Add(HighScores[i]);
+
+            HighScores = NewHighScores;
+
+            GameSaveRequested = true;
+            
+        }
+
+
+        private static void DoLoadGame(StorageDevice device)
+        {
+            // Open a storage container.
+            IAsyncResult result = device.BeginOpenContainer("Storage", null, null);
+
+            // Wait for the WaitHandle to become signaled.
+            result.AsyncWaitHandle.WaitOne();
+
+            StorageContainer container = device.EndOpenContainer(result);
+
+            // Close the wait handle.
+            result.AsyncWaitHandle.Close();
+
+            string filename = "savegame.sav";
+
+            // Check to see whether the save exists.
+            if (!container.FileExists(filename))
+            {
+                // If not, dispose of the container and return.
+                container.Dispose();
+                return;
+            }
+
+            // Open the file.
+            Stream stream = container.OpenFile(filename, FileMode.Open);
+            HighScores = new List<int>();
+
+#if WINDEMO
+            // Read the data from the file.
+            XmlSerializer serializer = new XmlSerializer(typeof(SaveGameData));
+            SaveGameData data = (SaveGameData)serializer.Deserialize(stream);
+#else
+            using (StreamReader sr = new StreamReader(stream))
+            {
+                System.Console.WriteLine("Loading...");
+                String input;
+                displayText = "";
+                while ((input = sr.ReadLine()) != null)
+                {
+                    System.Console.WriteLine(input);
+                    HighScores.Add(Int32.Parse(input));
+                }
+                sr.Close();
+            }
+#endif
+
+            // Close the file.
+            stream.Close();
+
+            // Dispose the container.
+            container.Dispose();
+        }
 
 
 
@@ -344,6 +433,12 @@ namespace Assgn02
             gameWon = false;
             gameOver = false;
             gameStarted = true;
+            inHighScore = false;
+        }
+
+        public void CheckHighScores()
+        {
+
         }
 
         /// <summary>
@@ -378,6 +473,25 @@ namespace Assgn02
                 if (console.IsActivated())
                     console.Draw(spriteBatch);
 
+            }
+            else if (inHighScore)
+            {
+                spriteBatch.Draw(HighScoreScreen, new Rectangle(0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height), Color.White);
+                List<TextObject> scoreLabels = new List<TextObject>();
+
+                for (int i=0; i<HighScores.Count; i++)
+                {
+                    int sW = graphics.GraphicsDevice.Viewport.Width;
+                    int sH = graphics.GraphicsDevice.Viewport.Height;
+                    if (i == 9)
+                        scoreLabels.Add(new TextObject("[" + (i + 1) + "]:   " + HighScores[i].ToString(), font, Color.Black, false));
+                    else
+                        scoreLabels.Add(new TextObject("[" + (i + 1) + "]:    " + HighScores[i].ToString(), font, Color.Black, false));
+                    scoreLabels[i].Position = new Vector2(sW/3, sH/5 + sH/15 * i);
+                    scoreLabels[i].Draw(spriteBatch);
+                }
+
+            
             }
             else if (gameWon)
             {

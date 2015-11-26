@@ -17,12 +17,12 @@ namespace Assignment3.MazeObjects
         protected float movingTime = 1;
 
         public Frog()
-            : base(Game1.ModelLib.Get("DerpyFrog"), Game1.TexLib.Get("WallTex"))
+            : base(Game1.ModelLib.Get("DerpyFrog"), Game1.TexLib.Get("eye texture"))
         {
         }
 
         public Frog(Vector3 startPos, Vector2 MapPos)
-            : base(Game1.ModelLib.Get("DerpyFrog"), Game1.TexLib.Get("WallTex"))
+            : base(Game1.ModelLib.Get("DerpyFrog"), Game1.TexLib.Get("eye texture"))
         {
             Position = startPos;
             m_MapPos = MapPos;

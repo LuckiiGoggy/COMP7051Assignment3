@@ -251,7 +251,7 @@ float4 DiffuseAndPhongPS(PixelShaderInputPerPixelDiffuse input) : COLOR
 
 	
 
-	float4 texColor = textureColor * input.Color;
+	float4 texColor = textureColor;
 	
 	float fog = 1;
 	if (FogEnabled)

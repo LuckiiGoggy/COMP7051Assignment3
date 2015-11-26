@@ -85,6 +85,12 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\Img\HighScoreScreen.png">
+      <Link>HighScoreScreen.png</Link>
+      <Name>HighScoreScreen</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
     <Compile Include="nothing_it_can.mp3">
       <Name>nothing_it_can</Name>
       <Importer>Mp3Importer</Importer>
