@@ -9,6 +9,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using Assgn01;
+using Microsoft.Xna.Framework.Storage;
+using System.IO;
 
 namespace Assgn02
 {
@@ -35,6 +37,8 @@ namespace Assgn02
         Assgn01.Console console;
         public static SpriteFont font;
 
+        public GeroUtilities.InputState input = new GeroUtilities.InputState();
+
         Texture2D WinScreen;
         Texture2D LoseScreen;
         Texture2D StartScreen;
@@ -52,6 +56,10 @@ namespace Assgn02
         Texture2D t_block;
         Texture2D t_paddle;
 
+
+        public bool GameSaveRequested = false;
+        IAsyncResult result;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -66,11 +74,6 @@ namespace Assgn02
         /// </summary>
         protected override void Initialize()
         {
-            graphics.IsFullScreen = false;
-            graphics.PreferredBackBufferWidth = 1280;
-            graphics.PreferredBackBufferHeight = 720;
-            graphics.ApplyChanges();
-
             phys = new PhysicsEngine(this.Window.ClientBounds.Width, this.Window.ClientBounds.Height);
             sprites = new List<Sprite>();
 
@@ -133,6 +136,8 @@ namespace Assgn02
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            //Update the input
+            input.UpdateState();
 
             //Update the positions of the objects
 
@@ -169,19 +174,43 @@ namespace Assgn02
 
                 if (console.IsActivated())
                 {
-                    console.TypeInto(snapshot.GetKeysTapped(Keyboard.GetState().GetPressedKeys()));
-                    if (Keyboard.GetState().IsKeyDown(Keys.Escape)) console.Deactivate();
-                    if (snapshot.IsKeyTapped(Keyboard.GetState(), Keys.Back)) console.BackSpace();
+                    console.TypeInto(input.GetKeysTapped());
+                    if (input.IsKeyTapped(Keys.Escape)) console.Deactivate();
+                    if (input.IsKeyTapped(Keys.Back)) console.BackSpace();
                 }
-                if (Keyboard.GetState().IsKeyDown(Keys.C) && !console.IsActivated())
+                if (input.IsKeyDown(Keys.C) && !console.IsActivated())
                 {
                     console.Activate();
                 }
             }
             else 
             {
-                if (Keyboard.GetState().IsKeyDown(Keys.X)) ResetGame();
-                if (GamePad.GetState(0).Buttons.X == ButtonState.Pressed) ResetGame();
+                if (input.IsKeyDown(Keys.X)) ResetGame();
+                if (input.IsButtonDown(Buttons.X)) ResetGame();
+            }
+
+
+            // Check for button for saving
+            if (input.IsButtonTapped(Buttons.Start))
+            {
+                if ((GameSaveRequested == false))
+                {
+                    GameSaveRequested = true;
+                    result = StorageDevice.BeginShowSelector(
+                            PlayerIndex.One, null, null);
+                }
+            }
+
+            if ((GameSaveRequested) && (result.IsCompleted))
+            {
+                StorageDevice device = StorageDevice.EndShowSelector(result);
+                if (device != null && device.IsConnected)
+                {
+                    DoSaveGame(device);
+                    //DoLoadGame(device);
+                }
+                // Reset the request flag
+                GameSaveRequested = false;
             }
 
 
@@ -195,6 +224,68 @@ namespace Assgn02
         {
             toRemove.Add(sprite);
         }
+
+
+
+
+        public struct SaveGameData
+        {
+            public List<int> Scores;
+        }
+
+        private static void DoSaveGame(StorageDevice device)
+        {
+            // Create the data to save.
+            SaveGameData data = new SaveGameData();
+            data.Scores = new List<int>();
+            data.Scores.Add(10);
+            data.Scores.Add(13);
+
+            // Open a storage container.
+            IAsyncResult result = device.BeginOpenContainer("Storage", null, null);
+
+            // Wait for the WaitHandle to become signaled.
+            result.AsyncWaitHandle.WaitOne();
+
+            StorageContainer container = device.EndOpenContainer(result);
+
+            // Close the wait handle.
+            result.AsyncWaitHandle.Close();
+
+            string filename = "savegame.sav";
+
+            // Check to see whether the save exists.
+            if (container.FileExists(filename))
+                // Delete it so that we can create one fresh.
+                container.DeleteFile(filename);
+
+            // Create the file.
+            Stream stream = container.CreateFile(filename);
+
+
+#if WINDEMO
+            // Convert the object to XML data and put it in the stream.
+            XmlSerializer serializer = new XmlSerializer(typeof(SaveGameData));
+            serializer.Serialize(stream, data);
+#else
+            using (StreamWriter sw = new StreamWriter(stream))
+            {
+                foreach (int score in data.Scores)
+                {
+                    System.Console.WriteLine("Avatar {0}", score);
+                    sw.WriteLine("Avatar {0}", score);
+                }
+                sw.Close();
+            }
+#endif
+
+            // Close the file.
+            stream.Close();
+
+            // Dispose the container, to commit changes.
+            container.Dispose();
+        }
+
 
 
 
@@ -252,7 +343,7 @@ namespace Assgn02
             //Draw all objects
             if (!gameStarted)
             {
-                spriteBatch.Draw(StartScreen, Vector2.Zero, Color.White);
+                spriteBatch.Draw(StartScreen, new Rectangle(0, 0, this.Window.ClientBounds.Width, this.Window.ClientBounds.Height), Color.White);
             }
             else if (!gameOver)
             {
@@ -270,11 +361,11 @@ namespace Assgn02
             }
             else if (gameWon)
             {
-                spriteBatch.Draw(WinScreen, Vector2.Zero, Color.White);
+                spriteBatch.Draw(WinScreen, new Rectangle(0,0,this.Window.ClientBounds.Width,this.Window.ClientBounds.Height), Color.White);
             }
             else if (!gameWon)
             {
-                spriteBatch.Draw(LoseScreen, Vector2.Zero, Color.White);
+                spriteBatch.Draw(LoseScreen, new Rectangle(0, 0, this.Window.ClientBounds.Width, this.Window.ClientBounds.Height), Color.White);
             }
 
             spriteBatch.End();

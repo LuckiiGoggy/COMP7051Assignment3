@@ -37,21 +37,21 @@ namespace Assignment3.MazeObjects
             {
                 if(movingTimer == 0)
                 {
-                    Console.WriteLine("Derp: MovingTimer==0");
+                    //Console.WriteLine("Derp: MovingTimer==0");
                     m_PrevMapPos = m_MapPos;
                     m_MapPos = ChooseNextPos();
                     movingTimer += timeDelta;
                 }
                 else if(movingTimer >= movingTime)
                 {
-                    Console.WriteLine("Derp: movingTimer >= movingTime");
+                    //Console.WriteLine("Derp: movingTimer >= movingTime");
                     movingTimer = 0;
                     moveDelayTimer = 0;
                     Position = new Vector3(2 * m_MapPos.Y, 2 * m_MapPos.X, 0);
                 }
                 else
                 {
-                    Console.WriteLine("Derp: Moving");
+                    //Console.WriteLine("Derp: Moving");
                     Vector3 distance = new Vector3(2 * m_MapPos.Y, 2 * m_MapPos.X, 0) - new Vector3(2 * m_PrevMapPos.Y, 2 * m_PrevMapPos.X, 0);
                     Translate(distance * (timeDelta / movingTime));
                     movingTimer += timeDelta;
