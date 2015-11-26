@@ -29,7 +29,7 @@ namespace Assignment3
         float avatarPitch;
         float currentavatarPitch;
         float rotationSpeed = 2f / 60f;
-        float forwardSpeed = 5f / 60f;
+        float forwardSpeed = 3f / 60f;
 
         public static InputState input = new InputState();
 
@@ -44,7 +44,7 @@ namespace Assignment3
         public static GameWindow Wind;
 
         public static Random rand = new Random();
-
+        public static bool fog = true;
 
         private EffectParameter cameraPositionParameter;
         private EffectParameter specularPowerParameter;
@@ -57,8 +57,6 @@ namespace Assignment3
         Vector3 v;
         bool XrayMode = true;
         public float zoomFactor = 0.5f;
-        GamePadState gState;
-        KeyboardState kState;
         int stepCounter;
         public static SoundPlayer soundPlayer = new SoundPlayer();
 
@@ -164,7 +162,9 @@ namespace Assignment3
 
         public void UpdatePosition(GameTime time)
         {
+            soundPlayer.UpdateVolume();
 
+            colChecker.CheckDistance(avatarPosition);
             #region Camera Rotation
             if (input.IsKeyDown(Keys.Left)) avatarYaw += rotationSpeed;// Rotate left.
             if (input.IsKeyDown(Keys.Right)) avatarYaw -= rotationSpeed;// Rotate right.
@@ -177,13 +177,6 @@ namespace Assignment3
                 currentavatarPitch = avatarPitch;
             } 
             #endregion
-
-            if (input.IsKeyDown(Keys.W) || input.IsKeyDown(Keys.S) || input.IsKeyDown(Keys.D) || input.IsKeyDown(Keys.A))
-            {
-
-                stepCounter += (int)time.ElapsedGameTime.Milliseconds;
-            }
-                
 
             if (input.IsKeyDown(Keys.W) || input.LeftStick.Y > 0.5f)
             {
@@ -200,6 +193,8 @@ namespace Assignment3
                     {
                         avatarPosition.Y -= v.Y;
                         avatarPosition.X -= v.X;
+                        soundPlayer.PlaySoundEffect("collideins");
+      
                     }
 
                 }
@@ -220,8 +215,8 @@ namespace Assignment3
                     {
                         avatarPosition.Y -= v.Y;
                         avatarPosition.X -= v.X;
+                        soundPlayer.PlaySoundEffect("collideins");
                     }
-
                 }
               
             }
@@ -241,11 +236,10 @@ namespace Assignment3
                     {
                         avatarPosition.Y -= v.Y;
                         avatarPosition.X -= v.X;
+                        soundPlayer.PlaySoundEffect("collideins");
                     }
 
-                }
-
-                
+                } 
             }
             if (input.IsKeyDown(Keys.D) || input.LeftStick.X > 0f)
             {
@@ -263,12 +257,18 @@ namespace Assignment3
                     {
                         avatarPosition.Y -= v.Y;
                         avatarPosition.X -= v.X;
+                        soundPlayer.PlaySoundEffect("collideins");
                     }
 
                 }
             }
 
-
+            if (input.IsKeyDown(Keys.W) || input.IsKeyDown(Keys.S) || input.IsKeyDown(Keys.D) || input.IsKeyDown(Keys.A)
+              || input.LeftStick.Y > 0.5f || input.LeftStick.Y < 0f || input.LeftStick.X < 0f || input.LeftStick.X > 0f)
+            {
+                stepCounter += (int)(Math.Sqrt(Math.Pow(v.Y, 2) + Math.Pow(v.X, 2))* 100);
+               
+            }
 
             if (input.IsKeyTapped(Keys.X) || input.IsButtonTapped(Buttons.Y)) XrayMode = !XrayMode;
             
@@ -310,11 +310,22 @@ namespace Assignment3
                 }
             }
 
-            if (input.IsKeyTapped(Keys.G) || input.IsButtonTapped(Buttons.RightShoulder)) effect.Parameters["FogEnabled"].SetValue(!effect.Parameters["FogEnabled"].GetValueBoolean());
+            if (input.IsKeyTapped(Keys.G) || input.IsButtonTapped(Buttons.RightShoulder))
+            {
+                fog = !fog;    
+                
+                effect.Parameters["FogEnabled"].SetValue(!effect.Parameters["FogEnabled"].GetValueBoolean());
+            }
+
             if (input.IsKeyTapped(Keys.F) || input.IsButtonTapped(Buttons.RightTrigger)) effect.Parameters["FlashLightOn"].SetValue(!effect.Parameters["FlashLightOn"].GetValueBoolean());
 
-            if (stepCounter % 21 == 0 && stepCounter > 10)
-                soundPlayer.PlaySoundEffect("footstep");
+            if (input.IsKeyTapped(Keys.M) || input.IsButtonTapped(Buttons.LeftTrigger))
+            {
+                soundPlayer.PauseMusic();
+            }
+            if (stepCounter % 13 <= 0 && stepCounter > 10)
+                soundPlayer.PlaySoundEffect("footstepins");
+
         }
 
         /// <summary>
@@ -362,17 +373,17 @@ namespace Assignment3
         {
             
             view.Update(gameTime);
-
+            GraphicsDevice.Clear(Color.Gray);
 
             if (night){
                 Renderer3D.Night();
-                GraphicsDevice.Clear(Color.Black);
+               
                 
             }
             else
             {
                 Renderer3D.Day();
-                GraphicsDevice.Clear(Color.CornflowerBlue);
+                
                
             }
                 

@@ -14,6 +14,7 @@ using Microsoft.Xna.Framework.Media;
 #endregion
 
 using Assignment3.GameObjects;
+using Assignment3.MazeObjects;
 
 namespace Assignment3
 {
@@ -37,7 +38,8 @@ namespace Assignment3
         {
             foreach (GameObject3D obj in GameObjectList)
             {
-                BoundingBoxes.Add(CreateBoundingBox(obj.Model, obj.GetWorldMatrix()));
+                if(obj is Wall || obj is Floor)
+                    BoundingBoxes.Add(CreateBoundingBox(obj.Model, obj.GetWorldMatrix()));
             }
         }
 
@@ -96,6 +98,24 @@ namespace Assignment3
             return false;
         }
 
+        public void CheckDistance(Vector3 cameraPosition)
+        {
+            foreach (GameObject3D obj in GameObjectList)
+            {
+                if (obj is Frog)
+                {
+                    float a = (obj.Position - cameraPosition).Length();
+                    if(a > 10){
+                        if(Game1.soundPlayer.Volume > 0.1)
+                            Game1.soundPlayer.ChangeBGVol(2 / (a + 5));
+                    }
+
+
+                    
+                    Console.WriteLine((obj.Position - cameraPosition).Length().ToString());
+                }
+            }
+        }
 
 
     }
