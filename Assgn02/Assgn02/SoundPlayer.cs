@@ -21,47 +21,51 @@ namespace Assgn01
             SoundEffectIns = new Dictionary<string, SoundEffectInstance>();
             Volume = 1f;
             MediaPlayer.IsRepeating = true;
-            MediaPlayer.Volume = 0.05f;
+            MediaPlayer.Volume = 0.5f;
         }
 
         public void InitSoundLibrary(ContentManager Content)
         {
-            Musics.Add("BG1", Content.Load<Song>("Music\\nothing_it_can"));
-            
-            
-            SoundEffects.Add("collide", Content.Load<SoundEffect>("Music\\punch"));
+            Musics.Add("BG1", Content.Load<Song>("nothing_it_can"));
 
-            SoundEffectIns.Add("footstepins", SoundEffects["footstep"].CreateInstance());
+            SoundEffects.Add("collideins", Content.Load<SoundEffect>("punch"));
 
-           
-
+            SoundEffectIns.Add("collideins", SoundEffects["collideins"].CreateInstance());
         }
 
         public void LoopMusic(string name)
         {
-            // MediaPlayer.Volume = (0.05f);
+            MediaPlayer.Volume = (0.5f);
             if (!Musics.ContainsKey(name)) throw new MissingMusicException("MissingMusicEffect: " + name);
-            MediaPlayer.Play(Musics[name]);
+            if (MediaPlayer.State == MediaState.Playing)
+            {
+
+            }
+            else
+            {
+                MediaPlayer.Play(Musics[name]);
+            }
+           
         }
 
         public void PauseMusic()
         {
-            if (MediaPlayer.State == MediaState.Paused)
-                MediaPlayer.Resume();
-            else
                 MediaPlayer.Pause();
+        }
+
+        public void ResumeMusic()
+        {
+            MediaPlayer.Resume();
         }
 
         public void PlaySoundEffect(string name)
         {
             if (!SoundEffectIns.ContainsKey(name)) throw new MissingSoundEffectException("MissingSoundEffect: " + name);
+            
 
-  
-            SoundEffectIns[name].Volume = (float)(0.2);
+           // SoundEffectIns[name].Play();
 
-            SoundEffectIns[name].Play();
-
-            //SoundEffects[name].Play(0.3f, 0.0f, 1f);   
+            SoundEffects[name].Play(0.1f, 0.0f, 0f);   
         }
 
     }

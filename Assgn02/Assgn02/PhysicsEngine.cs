@@ -23,13 +23,29 @@ namespace Assgn02
 
 
             if (sprite.Velocity.X < 0 && dst.X <= 0)
-                sprite.CollisionV += new Vector2(1,0);
+            {
+                sprite.CollisionV += new Vector2(1, 0);
+                Game1.soundPlayer.PlaySoundEffect("collideins");
+            }
+
             if (sprite.Velocity.X > 0 && dst.X + sprite.Texture.Width > ScreenWidth)
+            {
                 sprite.CollisionV += new Vector2(-1, 0);
+                Game1.soundPlayer.PlaySoundEffect("collideins");
+            }
+
             if (sprite.Velocity.Y < 0 && dst.Y <= 0)
+            {
                 sprite.CollisionV += new Vector2(0, 1);
+                Game1.soundPlayer.PlaySoundEffect("collideins");
+            }
+
             if (sprite.Velocity.Y > 0 && dst.Y + sprite.Texture.Height > ScreenHeight)
+            {
                 sprite.CollisionV += new Vector2(0, -1);
+               
+            }
+                
         }
 
         public void CheckWithEachOther(List<Sprite> sprites, int deltaTime)
@@ -48,6 +64,7 @@ namespace Assgn02
                     {
                         sprite1.Collide();
                         sprite1.Velocity = Vector2.Normalize(dstBetween) * sprite1.Velocity.Length();
+                        Game1.soundPlayer.PlaySoundEffect("collideins");
                     }
                 }
             }
@@ -67,6 +84,7 @@ namespace Assgn02
                 {
                     sprite2.Collide();
                     sprite1.Velocity = Vector2.Normalize(dstBetween) * sprite1.Velocity.Length();
+                    Game1.soundPlayer.PlaySoundEffect("collideins");
                 }
             }
         }
@@ -81,6 +99,7 @@ namespace Assgn02
             {
                 sprite1.Collide();
                 sprite1.Velocity = Vector2.Normalize(dstBetween) * sprite1.Velocity.Length();
+                Game1.soundPlayer.PlaySoundEffect("collideins");
             }
 
         }
@@ -88,11 +107,8 @@ namespace Assgn02
         public static void SolidCollision(PhysicsTransform sprite)
         {
             Vector2 cV = sprite.CollisionV;
-
-
-
             if (cV.X != 0) sprite.Velocity *= new Vector2(0, 1);
-            if (cV.Y != 0) sprite.Velocity *= new Vector2(1, 0);
+        
         }
         public static void BounceCollision(PhysicsTransform sprite)
         {
@@ -100,7 +116,7 @@ namespace Assgn02
 
             if (cV.X != 0) sprite.Velocity *= new Vector2(-1, 1);
             if (cV.Y != 0) sprite.Velocity *= new Vector2(1, -1);
-
+            
 
         }
     }

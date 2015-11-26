@@ -29,7 +29,7 @@ namespace Assignment3
         float avatarPitch;
         float currentavatarPitch;
         float rotationSpeed = 2f / 60f;
-        float forwardSpeed = 5f / 60f;
+        float forwardSpeed = 3f / 60f;
 
         public static InputState input = new InputState();
 
@@ -312,10 +312,7 @@ namespace Assignment3
 
             if (input.IsKeyTapped(Keys.G) || input.IsButtonTapped(Buttons.RightShoulder))
             {
-                fog = !fog;
-                
-
-                
+                fog = !fog;    
                 
                 effect.Parameters["FogEnabled"].SetValue(!effect.Parameters["FogEnabled"].GetValueBoolean());
             }
@@ -326,7 +323,7 @@ namespace Assignment3
             {
                 soundPlayer.PauseMusic();
             }
-            if (stepCounter % 15 <= 0 && stepCounter > 10)
+            if (stepCounter % 13 <= 0 && stepCounter > 10)
                 soundPlayer.PlaySoundEffect("footstepins");
 
         }

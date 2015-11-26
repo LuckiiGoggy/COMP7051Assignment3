@@ -23,7 +23,7 @@ namespace Assgn02
         SpriteBatch spriteBatch;
 
         static Color bgColor = Color.CornflowerBlue;
-
+        public static SoundPlayer soundPlayer;
         public static List<Sprite> sprites;
 
         public static TextObject scoreLabel;
@@ -74,9 +74,10 @@ namespace Assgn02
         /// </summary>
         protected override void Initialize()
         {
-            phys = new PhysicsEngine(this.Window.ClientBounds.Width, this.Window.ClientBounds.Height);
-            sprites = new List<Sprite>();
 
+            phys = new PhysicsEngine(graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
+            sprites = new List<Sprite>();
+            soundPlayer = new SoundPlayer();
             base.Initialize();
 
 
@@ -88,11 +89,12 @@ namespace Assgn02
         /// </summary>
         protected override void LoadContent()
         {
+          
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
             font = Content.Load<SpriteFont>("Courier New");
             snapshot = new StateSnapshot();
-
+            soundPlayer.InitSoundLibrary(Content);
             scoreLabel = new TextObject("Score: " + score, font, Color.Black, false);
 
             t_ball = this.Content.Load<Texture2D>("Ball");
@@ -102,21 +104,21 @@ namespace Assgn02
             LoseScreen = this.Content.Load<Texture2D>("LoseScreen");
             StartScreen = this.Content.Load<Texture2D>("StartScreen");
 
-            paddle = new Sprite(t_paddle, new Vector2(0, this.Window.ClientBounds.Height - t_paddle.Height));
+            paddle = new Sprite(t_paddle, new Vector2(0, graphics.GraphicsDevice.Viewport.Height - t_paddle.Height));
             paddle.PhysType = PhysicsTransform.PhysicsType.Solid;
             
             controller = new SpriteController(paddle);
 
-            console = new Assgn01.Console(graphics.GraphicsDevice, this.Window.ClientBounds.Width, this.Window.ClientBounds.Height);
+            console = new Assgn01.Console(graphics.GraphicsDevice, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height);
 
             ball = new Sprite(t_ball,
-                                    new Vector2(this.Window.ClientBounds.Width / 2 - t_ball.Width, this.Window.ClientBounds.Height / 2 - t_ball.Height)
+                                    new Vector2(graphics.GraphicsDevice.Viewport.Width / 2 - t_ball.Width, graphics.GraphicsDevice.Viewport.Height / 2 - t_ball.Height)
                                     , PhysicsTransform.PhysicsType.Elastic, true);
             ball.Velocity = new Vector2(0, 0.3f);
 
             gameStarted = false;
             gameOver = true;
-
+            soundPlayer.LoopMusic("BG1");
             //ResetGame();
         }
 
@@ -140,9 +142,18 @@ namespace Assgn02
             input.UpdateState();
 
             //Update the positions of the objects
+            if (!gameStarted || gameOver)
+            {
+                soundPlayer.PauseMusic();
+            }
+            if (gameStarted && !gameOver)
+            {
+                soundPlayer.ResumeMusic();
+            }
 
             if(!gameOver)
             {
+                //
                  controller.Update(gameTime);
 
                  phys.CheckWithEachOther(ball, paddle, gameTime.ElapsedGameTime.Milliseconds);
@@ -170,6 +181,7 @@ namespace Assgn02
                 {
                     gameOver = true;
                     gameWon = true;
+                    soundPlayer.PauseMusic();
                 }
 
                 if (console.IsActivated())
@@ -185,8 +197,11 @@ namespace Assgn02
             }
             else 
             {
-                if (input.IsKeyDown(Keys.X)) ResetGame();
-                if (input.IsButtonDown(Buttons.X)) ResetGame();
+                if (input.IsKeyDown(Keys.X) || input.IsButtonDown(Buttons.X)){
+                    ResetGame();
+                    //soundPlayer.PauseMusic();
+                }
+                
             }
 
 
@@ -215,6 +230,8 @@ namespace Assgn02
 
 
             snapshot.UpdateSnapshot(Keyboard.GetState(), Mouse.GetState(), GamePad.GetState(0));
+
+            
             base.Update(gameTime);
         }
 
@@ -224,8 +241,6 @@ namespace Assgn02
         {
             toRemove.Add(sprite);
         }
-
-
 
 
         public struct SaveGameData
@@ -301,6 +316,7 @@ namespace Assgn02
 
         public void ResetGame()
         {
+           
             score = 0;
             maxScore = 0;
 
@@ -310,16 +326,16 @@ namespace Assgn02
 
             for (int i = 0; i < rows; i++)
             {
-                for (int x = 0; x < this.Window.ClientBounds.Width / t_block.Width - 2; x++)
+                for (int x = 0; x < graphics.GraphicsDevice.Viewport.Width / t_block.Width - 2; x++)
                 {
                     sprites.Add(new Sprite(t_block, new Vector2((t_block.Width + 1) * x + t_block.Width, t_block.Height + (t_block.Height + 1) * i), PhysicsTransform.PhysicsType.Fragile));
                     maxScore++;
                 }
             }
 
-            paddle.Position = new Vector2(this.Window.ClientBounds.Width/2 - t_paddle.Width/2, this.Window.ClientBounds.Height - (t_paddle.Height * 2));
+            paddle.Position = new Vector2(graphics.GraphicsDevice.Viewport.Width/2 - t_paddle.Width/2, graphics.GraphicsDevice.Viewport.Height - (t_paddle.Height * 2));
 
-            ball.Position = new Vector2(this.Window.ClientBounds.Width / 2 - t_ball.Width, this.Window.ClientBounds.Height / 2 - t_ball.Height);
+            ball.Position = new Vector2(graphics.GraphicsDevice.Viewport.Width / 2 - t_ball.Width, graphics.GraphicsDevice.Viewport.Height / 2 - t_ball.Height);
             ball.Velocity = new Vector2(0, 0.3f);
 
             sprites.Add(ball);
@@ -343,10 +359,14 @@ namespace Assgn02
             //Draw all objects
             if (!gameStarted)
             {
-                spriteBatch.Draw(StartScreen, new Rectangle(0, 0, this.Window.ClientBounds.Width, this.Window.ClientBounds.Height), Color.White);
+                spriteBatch.Draw(StartScreen, new Rectangle(0, 0,
+            graphics.GraphicsDevice.Viewport.Width,
+            graphics.GraphicsDevice.Viewport.Height), Color.White);
             }
             else if (!gameOver)
             {
+                
+                
                 foreach (Sprite sprite in sprites)
                 {
                     sprite.Draw(spriteBatch);
@@ -361,11 +381,13 @@ namespace Assgn02
             }
             else if (gameWon)
             {
-                spriteBatch.Draw(WinScreen, new Rectangle(0,0,this.Window.ClientBounds.Width,this.Window.ClientBounds.Height), Color.White);
+                soundPlayer.PauseMusic();
+                spriteBatch.Draw(WinScreen, new Rectangle(0,0,graphics.GraphicsDevice.Viewport.Width,graphics.GraphicsDevice.Viewport.Height), Color.White);
             }
             else if (!gameWon)
             {
-                spriteBatch.Draw(LoseScreen, new Rectangle(0, 0, this.Window.ClientBounds.Width, this.Window.ClientBounds.Height), Color.White);
+                soundPlayer.PauseMusic();
+                spriteBatch.Draw(LoseScreen, new Rectangle(0, 0, graphics.GraphicsDevice.Viewport.Width, graphics.GraphicsDevice.Viewport.Height), Color.White);
             }
 
             spriteBatch.End();

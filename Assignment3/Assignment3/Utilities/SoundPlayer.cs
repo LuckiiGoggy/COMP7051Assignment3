@@ -21,7 +21,7 @@ namespace Assignment3.Utilities
             SoundEffectIns = new Dictionary<string,SoundEffectInstance>();
             Volume = 1f;
             MediaPlayer.IsRepeating = true;
-            MediaPlayer.Volume = 0.05f;
+            MediaPlayer.Volume = 0.1f;
         }
 
         public void InitSoundLibrary(ContentManager Content)
@@ -56,17 +56,17 @@ namespace Assignment3.Utilities
         {
             if (Game1.fog)
             {
-                MediaPlayer.Volume = 0.03f;
+                MediaPlayer.Volume = 0.3f;
 
             }
             else if (!Game1.fog)
             {
-                MediaPlayer.Volume = 0.12f;
+                MediaPlayer.Volume = 0.6f;
             }
 
         }
         public void ChangeBGVol(float z){
-            MediaPlayer.Volume = 0.1f * z;
+            MediaPlayer.Volume = 0.05f * z;
         }
         public void StopMusic()
         {
@@ -78,12 +78,12 @@ namespace Assignment3.Utilities
 
             if (Game1.fog)
             {
-                SoundEffectIns[name].Volume = (float)(0.05);
+                SoundEffectIns[name].Volume = (float)(0.6);
 
             }
             else if (!Game1.fog)
             {
-                SoundEffectIns[name].Volume = (float)(0.2);
+                SoundEffectIns[name].Volume = (float)(0.6);
             }
             
             SoundEffectIns[name].Play();
